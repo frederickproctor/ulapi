@@ -23,13 +23,11 @@ add_library(dlulapi SHARED
   src/unix_rtapi.c
   src/unix_ulapi.c
   )
-set_target_properties(dlulapi PROPERTIES COMPILE_FLAGS "-shared -fPIC")
 
 ## The shared object function test file, 'libdlfuncs.so'
 add_library(dlfuncs SHARED
   src/dlfuncs.c
   )
-set_target_properties(dlfuncs PROPERTIES COMPILE_FLAGS "-shared -fPIC")
 
 ## Declare a cpp executable
 add_executable(ultest src/ultest.c)

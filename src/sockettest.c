@@ -180,6 +180,8 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+  ulapi_set_debug(ULAPI_DEBUG_ALL);
+
   if (is_client) {
     if (is_broadcastee) {
       socket_id = ulapi_socket_get_broadcastee_id_on_interface(port, intfptr);
@@ -191,7 +193,7 @@ int main(int argc, char *argv[])
 	printf("listening to broadcasts on port %d\n", (int) port);
       }
     } else {
-      socket_id = ulapi_socket_get_client_id(port, host);
+      socket_id = ulapi_socket_get_client_id_on_interface(port, host, intfptr);
       if (socket_id < 0) {
 	fprintf(stderr, "can't connect to %s on port %d\n", host, (int) port);
 	ulapi_exit();

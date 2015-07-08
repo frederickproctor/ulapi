@@ -861,28 +861,39 @@ ulapi_result ulapi_rtm_delete(void * shm)
 #endif	/* HAVE_RTAI */
 
 ulapi_integer
-ulapi_socket_get_client_id(ulapi_integer port, const char *hostname)
+ulapi_socket_get_client_id_on_interface(ulapi_integer port, const char *hostname, const char *intf)
 {
   int socket_fd;
+  struct sockaddr_in local_addr;
   struct sockaddr_in server_addr;
   struct hostent *ent;
   struct in_addr *in_a;
+
+  if (-1 == (socket_fd = socket(PF_INET, SOCK_STREAM, 0))) {
+    PERROR("socket");
+    return -1;
+  }
+
+  if (NULL != intf) {
+    memset(&local_addr, 0, sizeof(local_addr));
+    local_addr.sin_family = PF_INET;
+    local_addr.sin_addr.s_addr = inet_addr(intf);
+    if (0 != bind(socket_fd, (struct sockaddr *) &local_addr, sizeof(local_addr))) {
+      PERROR("bind");
+      close(socket_fd);
+      return -1;
+    }
+  }
 
   if (NULL == (ent = gethostbyname(hostname))) {
     PERROR("gethostbyname");
     return -1;
   }
   in_a = (struct in_addr *) ent->h_addr_list[0];
-
   memset(&server_addr, 0, sizeof(struct sockaddr_in));
   server_addr.sin_family = PF_INET;
   server_addr.sin_addr.s_addr = in_a->s_addr;
   server_addr.sin_port = htons(port);
-
-  if (-1 == (socket_fd = socket(PF_INET, SOCK_STREAM, 0))) {
-    PERROR("socket");
-    return -1;
-  }
 
   if (-1 == connect(socket_fd, 
 		    (struct sockaddr *) &server_addr,
@@ -893,6 +904,12 @@ ulapi_socket_get_client_id(ulapi_integer port, const char *hostname)
   }
 
   return socket_fd;
+}
+
+ulapi_integer
+ulapi_socket_get_client_id(ulapi_integer port, const char *hostname)
+{
+  return ulapi_socket_get_client_id_on_interface(port, hostname, NULL);
 }
 
 ulapi_integer

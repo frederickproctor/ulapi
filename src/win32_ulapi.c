@@ -1045,7 +1045,7 @@ ulapi_socket_get_client_id_on_interface(ulapi_integer port,
     local_addr.sin_addr.s_addr = inet_addr(intf);
     if (0 != bind(socket_fd, (struct sockaddr *) &local_addr, sizeof(local_addr))) {
       PERROR("bind");
-      close(socket_fd);
+      closesocket(socket_fd);
       return -1;
     }
   }
@@ -1069,6 +1069,12 @@ ulapi_socket_get_client_id_on_interface(ulapi_integer port,
   }
 
   return socket_fd;
+}
+
+ulapi_integer
+ulapi_socket_get_client_id(ulapi_integer port, const char *hostname)
+{
+  return ulapi_socket_get_client_id_on_interface(port, hostname, NULL);
 }
 
 ulapi_integer ulapi_socket_get_server_id_on_interface(ulapi_integer port, const char *intf)
@@ -1155,6 +1161,23 @@ ulapi_integer ulapi_socket_get_server_id_on_interface(ulapi_integer port, const 
 ulapi_integer ulapi_socket_get_server_id(ulapi_integer port)
 {
   return ulapi_socket_get_server_id_on_interface(port, NULL);
+}
+
+ulapi_result
+ulapi_getpeername(int s, char *ipstr, size_t iplen, ulapi_integer *port)
+{
+  struct sockaddr addr;
+  struct sockaddr_in *saddr;
+  size_t len;
+
+  len = sizeof(addr);
+  getpeername(s, &addr, &len);
+
+  saddr = (struct sockaddr_in *) &addr;
+  *port = ntohs(saddr->sin_port);
+  ulapi_strncpy(ipstr, inet_ntoa(saddr->sin_addr), iplen);
+
+  return ULAPI_OK;
 }
 
 ulapi_integer ulapi_socket_get_connection_id(ulapi_integer socket_fd)

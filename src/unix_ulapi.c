@@ -1005,7 +1005,7 @@ ulapi_getpeername(int s, char *ipstr, size_t iplen, ulapi_integer *port)
 
   saddr = (struct sockaddr_in *) &addr;
   *port = ntohs(saddr->sin_port);
-  inet_ntop(AF_INET, &saddr->sin_addr, ipstr, iplen);
+  ulapi_strncpy(ipstr, inet_ntoa(saddr->sin_addr), iplen);
 
   return ULAPI_OK;
 }

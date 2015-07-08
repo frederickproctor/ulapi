@@ -120,6 +120,8 @@ int main(int argc, char *argv[])
   void *server_task;
   client_read_args client_read_args_inst;
   server_args *server_args_ptr;
+  char connection_addr[BUFFERLEN];
+  int connection_port;
 
   intfptr = NULL;
   opterr = 0;
@@ -239,7 +241,8 @@ int main(int argc, char *argv[])
       if (client_id < 0) {
 	break;
       }
-      printf("got one on fd %d\n", client_id);
+      ulapi_getpeername(client_id, connection_addr, sizeof(connection_addr), &connection_port);
+      printf("got one on fd %d from %s on port %d\n", client_id, connection_addr, connection_port);
 
       if (0 <= broadcast_id) {
 		  ulapi_socket_write(broadcast_id, "you have a neighbor", strlen("you have a neighbor"));

@@ -114,6 +114,7 @@ extern void ulapi_free_argv(ulapi_integer argc, char **argv);
 */
 enum {ULAPI_DEBUG_WARN = 0x01,
       ULAPI_DEBUG_ERROR = 0x02,
+      ULAPI_DEBUG_INFO = 0x04,
       ULAPI_DEBUG_ALL = 0xFF};
 
 extern void ulapi_set_debug(ulapi_integer mask);
@@ -328,6 +329,8 @@ extern ulapi_integer ulapi_socket_get_server_id_on_interface(ulapi_integer port,
   integer socket descriptor for later sends and receives.
 */
 extern ulapi_integer ulapi_socket_get_connection_id(ulapi_integer id);
+
+extern ulapi_result ulapi_getpeername(ulapi_integer id, char *ipstr, size_t iplen, ulapi_integer *port);
 
 /*!
   Gets an fd for broadcast writing.

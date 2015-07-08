@@ -993,11 +993,29 @@ ulapi_socket_get_server_id(ulapi_integer port)
   return ulapi_socket_get_server_id_on_interface(port, NULL);
 }
 
+ulapi_result
+ulapi_getpeername(int s, char *ipstr, size_t iplen, ulapi_integer *port)
+{
+  struct sockaddr addr;
+  struct sockaddr_in *saddr;
+  socklen_t len;
+
+  len = sizeof(addr);
+  getpeername(s, &addr, &len);
+
+  saddr = (struct sockaddr_in *) &addr;
+  *port = ntohs(saddr->sin_port);
+  inet_ntop(AF_INET, &saddr->sin_addr, ipstr, iplen);
+
+  return ULAPI_OK;
+}
+
 ulapi_integer
 ulapi_socket_get_connection_id(ulapi_integer socket_fd)
 {
   fd_set rfds;
   struct sockaddr_in client_addr;
+  struct sockaddr client_info;
   unsigned int client_len;
   int client_fd;
   int retval;

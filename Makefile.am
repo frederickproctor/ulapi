@@ -1,6 +1,6 @@
 SUBDIRS = src lib bin
 
-EXTRA_DIST = Makefile.am Makefile.local acinclude.m4 configure.ac autoconf.sh config/config.guess config/config.sub rtlib/README rtlib/Makefile rtlib/SETUP ulapi.m4 win32
+EXTRA_DIST = Makefile.am Makefile.local acinclude.m4 configure.ac autoconf.sh config/config.guess config/config.sub ulapi.m4 win32
 nobase_data_DATA = ulapi.m4
 
 # uncomment these lines if you want to include the Doxygen documentation
@@ -11,6 +11,8 @@ nobase_data_DATA = ulapi.m4
 include doxygen.am
 
 if HAVE_RTAI
+
+EXTRA_DIST +=  rtlib/README rtlib/Makefile rtlib/SETUP
 
 all-local:
 	make -f Makefile.local modules

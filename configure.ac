@@ -1,8 +1,8 @@
-AC_INIT(ulapi, 1.5)
+AC_INIT([ulapi], [1.5])
 AC_CONFIG_AUX_DIR([config])
-AM_INIT_AUTOMAKE(ulapi, 1.5)
 AC_CONFIG_SRCDIR([src/ulapi.h])
 AC_CONFIG_HEADERS([config/config.h])
+AM_INIT_AUTOMAKE([subdir-objects])
 
 # Checks for programs.
 AC_PROG_CC

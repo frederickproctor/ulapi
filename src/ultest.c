@@ -226,6 +226,7 @@ static ulapi_result test_process(void)
   /* start a bogus process */
   ph = ulapi_process_new();
   if (NULL == ph) return ULAPI_ERROR;
+  printf("starting bogus process, expect an error:\n");
   retval = ulapi_process_start(ph, NO_PROC);
   /* we are the parent */
   if (ULAPI_OK != retval) return ULAPI_ERROR; /* the 'fork' failed */

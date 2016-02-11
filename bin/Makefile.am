@@ -1,4 +1,4 @@
-bin_PROGRAMS = ultest semtest inifind sockettest serialtest serial
+bin_PROGRAMS = ultest semtest inifind sockettest serialtest
 
 ultest_SOURCES = ../src/ultest.c
 ultest_LDADD = -L../lib -lulapi @PTHREAD_LIBS@ @RTAI_LIBS@
@@ -18,11 +18,6 @@ inifind_CFLAGS = -DINIFILE_MAIN
 sockettest_SOURCES = ../src/sockettest.c
 sockettest_LDADD = -L../lib -lulapi @PTHREAD_LIBS@ @RTAI_LIBS@
 sockettest_DEPENDENCIES = ../lib/libulapi.a
-
-serial_SOURCES = ../src/serial.c ../src/serial.h
-serial_CFLAGS = -DMAIN
-serial_LDADD = -L../lib -lulapi @PTHREAD_LIBS@ @RTAI_LIBS@
-serial_DEPENDENCIES = ../lib/libulapi.a
 
 if NO_DL
 else

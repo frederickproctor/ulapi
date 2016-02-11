@@ -5,7 +5,6 @@ set(ROS_BUILD_TYPE Debug)
 ## The base library, 'libulapi.a'
 add_library(ulapi
   ../src/inifile.c
-  ../src/serial.c
   ../src/ulapi_getopt.c
   ../src/unix_rtapi.c
   ../src/unix_ulapi.c

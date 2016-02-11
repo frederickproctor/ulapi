@@ -17,7 +17,6 @@ install(FILES
   ../src/inifile.h
   ../src/rtapi.h
   ../src/rtapi_app.h
-  ../src/serial.h
   ../src/ulapi.h
   ../src/ulapi_getopt.h
   DESTINATION include)

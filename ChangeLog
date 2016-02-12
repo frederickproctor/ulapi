@@ -1,3 +1,7 @@
+1.6	12 February 2016
+	Integrated getopt as ulapi_getopt, eliminating extra code and
+	header
+	
 1.5	9 May 2014
 	Handled getopt and dl so that they are built by default for Unix,
 	and inhibited with NEED_GETOPT and NO_DL.

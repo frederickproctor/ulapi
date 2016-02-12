@@ -18,5 +18,4 @@ install(FILES
   ../src/rtapi.h
   ../src/rtapi_app.h
   ../src/ulapi.h
-  ../src/ulapi_getopt.h
   DESTINATION include)

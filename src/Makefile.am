@@ -1,5 +1,4 @@
 include_HEADERS = \
-ulapi_getopt.h \
 inifile.h \
 rtapi.h \
 rtapi_app.h \

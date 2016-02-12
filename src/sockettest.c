@@ -124,29 +124,29 @@ int main(int argc, char *argv[])
   int connection_port;
 
   intfptr = NULL;
-  opterr = 0;
+  ulapi_opterr = 0;
   is_client = 0;	 /* start as server unless host is provided */
   is_broadcastee = 0;	 /* client reads as usual, not broadcast port */
   port = -1;		 /* start with invalid port number */
 
   for (;;) {
-    option = getopt(argc, argv, ":p:h:i:b");
+    option = ulapi_getopt(argc, argv, ":p:h:i:b");
     if (option == -1)
       break;
 
     switch (option) {
     case 'p':
-      port = atoi(optarg);
+      port = atoi(ulapi_optarg);
       break;
 
     case 'h':
-      strncpy(host, optarg, sizeof(host));
+      strncpy(host, ulapi_optarg, sizeof(host));
       host[sizeof(host) - 1] = 0;
       is_client = 1;
       break;
 
     case 'i':
-      strncpy(intf, optarg, sizeof(intf));
+      strncpy(intf, ulapi_optarg, sizeof(intf));
       intf[sizeof(intf) - 1] = 0;
       intfptr = intf;
       break;
@@ -157,18 +157,18 @@ int main(int argc, char *argv[])
       break;
 
     case ':':
-      fprintf(stderr, "missing value for -%c\n", optopt);
+      fprintf(stderr, "missing value for -%c\n", ulapi_optopt);
       return 1;
       break;
 
     default:			/* '?' */
-      fprintf(stderr, "unrecognized option -%c\n", optopt);
+      fprintf(stderr, "unrecognized option -%c\n", ulapi_optopt);
       return 1;
       break;
     }
   }
-  if (optind < argc) {
-    fprintf(stderr, "extra non-option characters: %s\n", argv[optind]);
+  if (ulapi_optind < argc) {
+    fprintf(stderr, "extra non-option characters: %s\n", argv[ulapi_optind]);
     return 1;
   }
 

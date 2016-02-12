@@ -28,16 +28,18 @@
 #ifndef ULAPI_H
 #define ULAPI_H
 
+#include <stdio.h>		/* printf */
+#include <string.h>		/* stricmp, strcasecmp */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #if 0
 } /* just to match one above, for indenters */
 #endif
 #endif
-
-#include <stdio.h>		/* printf */
-#include <string.h>		/* stricmp, strcasecmp */
-#include "ulapi_getopt.h"
 
 /* make sure we have enough string space to print numbers as strings */
 #ifndef DIGITS_IN
@@ -566,6 +568,53 @@ extern ulapi_flag ulapi_ispath(const char *path);
 extern char *ulapi_fixpath(const char *path, char *fix, size_t len);
 extern char *ulapi_basename(const char *path, char *base);
 extern char *ulapi_dirname(const char *path, char *dir);
+
+/* Native implementation of getopt */
+
+#define ulapi_getopt getopt
+#define ulapi_optarg optarg
+#define ulapi_optind optind
+#define ulapi_opterr opterr
+#define ulapi_optopt optopt
+#define ulapi_getopt_long getopt_long
+
+#ifdef WIN32
+#define NEED_GETOPT
+#endif
+
+#ifndef NEED_GETOPT
+
+#include <getopt.h>
+
+#else
+
+struct option
+{
+  const char *name;
+  /* has_arg can't be an enum because some compilers complain about
+     type mismatches in all the code that assumes it is an int.  */
+  int has_arg;
+  int *flag;
+  int val;
+};
+
+/* Names for the values of the `has_arg' field of `struct option'.  */
+
+# define no_argument		0
+# define required_argument	1
+# define optional_argument	2
+
+extern int	opterr;
+extern int	optind;
+extern int	optopt;
+extern char    *optarg;
+extern int	optreset;
+
+extern int getopt(int nargc, char * const *nargv, const char *options);
+
+extern int getopt_long(int nargc, char * const * nargv, const char * options, const struct option * long_options, int * idx);
+
+#endif	/* NEED_GETOPT */
 
 #ifdef __cplusplus
 #if 0

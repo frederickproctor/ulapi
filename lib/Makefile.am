@@ -1,6 +1,6 @@
 lib_LIBRARIES = libulapi.a
 
-SOURCES = ../src/unix_ulapi.c ../src/ulapi.h ../src/inifile.c ../src/inifile.h ../src/ulapi_getopt.c ../src/ulapi_getopt.h ../src/unix_rtapi.c ../src/rtapi.h
+SOURCES = ../src/unix_ulapi.c ../src/ulapi.h ../src/inifile.c ../src/inifile.h ../src/unix_rtapi.c ../src/rtapi.h
 libulapi_a_SOURCES = $(SOURCES)
 
 if NO_DL

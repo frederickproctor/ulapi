@@ -72,7 +72,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\inifile.c" />
-    <ClCompile Include="..\..\src\ulapi_getopt.c" />
     <ClCompile Include="..\..\src\win32_rtapi.c" />
     <ClCompile Include="..\..\src\win32_ulapi.c" />
   </ItemGroup>
@@ -81,7 +80,6 @@
     <ClInclude Include="..\..\src\rtapi.h" />
     <ClInclude Include="..\..\src\serial.h" />
     <ClInclude Include="..\..\src\ulapi.h" />
-    <ClInclude Include="..\..\src\ulapi_getopt.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -11,3 +11,5 @@ libdlulapi_a_SOURCES = $(SOURCES)
 libdlulapi_a_CFLAGS = @DL_CFLAGS@
 
 endif
+
+EXTRA_DIST = CMakeLists.txt Makefile.am

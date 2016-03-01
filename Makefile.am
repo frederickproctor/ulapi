@@ -1,6 +1,6 @@
 SUBDIRS = src lib bin
 
-EXTRA_DIST = Makefile.am Makefile.local acinclude.m4 configure.ac autoconf.sh config/config.guess config/config.sub ulapi.m4 win32
+EXTRA_DIST = CMakeLists.txt Makefile.am Makefile.local acinclude.m4 configure.ac autoconf.sh config/config.guess config/config.sub package.xml ulapi.m4 win32
 nobase_data_DATA = ulapi.m4
 
 # uncomment these lines if you want to include the Doxygen documentation

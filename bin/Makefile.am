@@ -34,3 +34,5 @@ dlfuncs_so_LDADD = @DL_CFLAGS@ -L../lib -ldlulapi @RTAI_LIBS@
 dlfuncs_so_DEPENDENCIES = ../lib/libdlulapi.a
 
 endif
+
+EXTRA_DIST = CMakeLists.txt Makefile.am

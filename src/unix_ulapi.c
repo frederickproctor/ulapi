@@ -387,6 +387,55 @@ ulapi_result ulapi_process_delete(void *proc)
   "this is the string of args", and a pointer to an array of strings
   into which each arg will be copied.
 */
+
+static int to_argv(char *src, char *dst, char *argv[])
+{
+  char *ptr;
+  int count;
+  int inquote;
+  int wasspace;
+
+  strcpy(dst, src);
+
+  ptr = dst;
+  count = 0;
+  inquote = 0;
+  wasspace = 1;
+
+  while (*ptr != 0) {
+
+    if (*ptr == 0) {
+      break;
+    }
+
+    if (*ptr == '"') {
+      inquote = !inquote;
+    }
+
+    if (isspace(*ptr)) {
+      if (inquote) {
+	ptr++;
+      } else {
+	*ptr++ = 0;
+	wasspace = 1;
+      }
+      continue;
+    }
+
+    if (wasspace) {
+      argv[count] = ptr;
+      count++;
+    }
+    ptr++;
+    wasspace = 0;
+  }
+
+  argv[count] = NULL;
+
+  return count;
+}
+
+#if 0
 static int to_argv(char *src, char *dst, char *argv[])
 {
   int count;
@@ -406,11 +455,13 @@ static int to_argv(char *src, char *dst, char *argv[])
 
   return count + 1;
 }
+#endif
 
 ulapi_result ulapi_process_start(void *proc, char *path)
 {
   ulapi_result retval = ULAPI_OK;
   pid_t pid;
+  int argc;
   char **argv;
   char *dst;
   int maxargc;
@@ -428,7 +479,15 @@ ulapi_result ulapi_process_start(void *proc, char *path)
     maxargc = strlen(path) + 1;
     argv = malloc(maxargc * sizeof(*argv));
     dst = malloc(maxargc);
-    (void) to_argv(path, dst, argv);
+#undef USE_ULAPI_TO_ARGV
+#ifdef USE_ULAPI_TO_ARGV
+    argc = ulapi_to_argv(path, &argv);
+#else
+    argc = to_argv(path, dst, argv);
+#endif
+    if (ulapi_debug_level & ULAPI_DEBUG_INFO) {
+      ulapi_print("ulapi_process_start: starting %s\n", path);
+    }
     if (-1 == execvp(argv[0], argv)) {
       /*
 	we're still running as a copy of the forked process, which may
@@ -440,6 +499,9 @@ ulapi_result ulapi_process_start(void *proc, char *path)
       _exit(1);
     }
     // else we exec'ed OK and would not have gotten here
+#ifdef USE_ULAPI_TO_ARGV
+    ulapi_free_argv(argc, argv);
+#endif
     break;
   default:
     // we're the parent

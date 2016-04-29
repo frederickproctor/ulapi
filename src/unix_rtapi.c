@@ -22,8 +22,11 @@
 #include <sys/sem.h>
 #include <errno.h>
 #include <fcntl.h>		/* O_RDONLY, O_NONBLOCK */
+#include <termios.h>  		/* tcflush, TCIOFLUSH */
 #include <sys/types.h>		/* fd_set, FD_ISSET() */
 #include <sys/socket.h>		/* PF_INET, socket(), listen(), bind(), etc. */
+#include <sys/stat.h>		/* struct stat */
+#include <sys/ioctl.h>
 #include <netinet/in.h>		/* struct sockaddr_in */
 #include <netdb.h>		/* gethostbyname */
 #include "rtapi.h"		/* these decls */
@@ -876,6 +879,97 @@ rtapi_result rtapi_socket_close(rtapi_integer id)
 
 /* Serial interface */
 
+/* Converts a baud rate number, say 9600, into its equivalent token,
+   say B9600. */
+static int to_bbaud(int baud)
+{
+  int maxbbaud;
+
+  if (baud <= 50) return B50;
+  if (baud <= 75) return B75;
+  if (baud <= 110) return B110;
+  if (baud <= 134) return B134;
+  if (baud <= 150) return B150;
+  if (baud <= 200) return B200;
+  if (baud <= 300) return B300;
+  if (baud <= 600) return B600;
+  if (baud <= 1200) return B1200;
+  if (baud <= 1800) return B1800;
+  if (baud <= 2400) return B2400;
+  if (baud <= 4800) return B4800;
+  if (baud <= 9600) return B9600;
+  if (baud <= 19200) return B19200;
+  if (baud <= 38400) return B38400;
+  if (baud <= 57600) return B57600;
+  maxbbaud = B57600;
+#ifdef B115200
+  if (baud <= 115200) return B115200;
+  maxbbaud = B115200;
+#endif
+#ifdef B230400
+  if (baud <= 230400) return B230400;
+  maxbbaud = B230400;
+#endif
+#ifdef B460800
+  if (baud <= 460800) return B460800;
+  maxbbaud = B460800;
+#endif
+  return maxbbaud;
+}
+
+/* put terminal into a raw mode, and save original settings */
+static int tty_raw(int fd, int baud, struct termios * save_termios)
+{
+  struct termios buf;
+  int status;
+
+  if (tcgetattr(fd, save_termios) < 0) {
+    return -1;
+  }
+
+  buf = *save_termios;	/* structure copy */
+
+  baud = to_bbaud(baud);
+  cfsetispeed(&buf, baud);
+  cfsetospeed(&buf, baud);
+
+  buf.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+  /* echo off, canonical mode off, extended input
+     processing off, signal chars off */
+
+  buf.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+  /* no SIGINT on BREAK, CR-to-NL off, input parity
+     check off, don't strip 8th bit on input,
+     output flow control off */
+
+  buf.c_cflag &= ~(CSIZE | PARENB);
+  /* clear size bits, parity checking off */
+  buf.c_cflag |= CS8;
+  /* set 8 bits/char */
+
+  buf.c_oflag &= ~(OPOST);
+  /* output processing off */
+
+  buf.c_cc[VMIN] = 1;	/* Case B: 1 byte at a time, no timer */
+  buf.c_cc[VTIME] = 0;
+
+  if (tcsetattr(fd, TCSAFLUSH, &buf) < 0) {
+    return -1;
+  }
+
+  ioctl(fd, TIOCMGET, &status);
+#if 1
+  /* enable DTR and RTS */
+  status &= ~(TIOCM_DTR | TIOCM_RTS);
+#else
+  /* disable DTR and RTS */
+  status |= (TIOCM_DTR | TIOCM_RTS);
+#endif
+  ioctl(fd, TIOCMSET, &status);
+
+  return 0;
+}
+
 void * 
 rtapi_serial_new(void)
 {
@@ -900,6 +994,17 @@ rtapi_serial_open(const char * port, void * id)
   if (fd < 0) return RTAPI_ERROR;
   
   *((int *) id) = fd;
+  return RTAPI_OK;
+}
+
+rtapi_result
+rtapi_serial_baud(void *id, int baud)
+{
+  int fd = *((int *) id);
+  struct termios save_termios;
+
+  if (0 != tty_raw(fd, baud, &save_termios)) return RTAPI_ERROR;
+
   return RTAPI_OK;
 }
 

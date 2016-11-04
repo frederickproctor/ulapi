@@ -1,1 +1,2 @@
+This software is in the public domain.
 

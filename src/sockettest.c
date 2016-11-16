@@ -200,7 +200,12 @@ int main(int argc, char *argv[])
     ulapi_task_start(client_read_task, client_read_code, &client_read_args_inst, ulapi_prio_lowest(), 0);
 
     for (;;) {
-      if (! is_broadcastee) {
+      if (is_broadcastee) {
+	/* just wait until ^D to end, since client task handles reads */
+	if (NULL == fgets(outbuf, sizeof(outbuf), stdin)) {
+	  break;
+	}
+      } else {
 	if (NULL == fgets(outbuf, sizeof(outbuf), stdin)) {
 	  break;
 	}

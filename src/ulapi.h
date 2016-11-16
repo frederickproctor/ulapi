@@ -337,6 +337,23 @@ extern ulapi_integer ulapi_socket_get_broadcastee_id(ulapi_integer port);
 /*! Equivalent to ulapi_socket_get_broadcastee_id but with a specified interface. */
 extern ulapi_integer ulapi_socket_get_broadcastee_id_on_interface(ulapi_integer port, const char *intf);
 
+#define ULAPI_SOCKET_DEFAULT_MULTICAST_GROUP "224.0.0.1"
+
+/*!
+  Gets an fd for multicasting across the entire subnet.
+ */
+extern ulapi_integer ulapi_socket_get_multicaster_id(ulapi_integer port);
+/*!
+  Equivalent to ulapi_socket_get_multicaster_id but with a specified interface group.
+ */
+extern ulapi_integer ulapi_socket_get_multicaster_id_on_interface(ulapi_integer port, const char *intf);
+/*!
+  Gets an fd for multicast reading.
+*/
+extern ulapi_integer ulapi_socket_get_multicastee_id(ulapi_integer port);
+/*!
+  Equivalent to ulapi_socket_get_multicastee_id but with a specified interface group. */
+extern ulapi_integer ulapi_socket_get_multicastee_id_on_interface(ulapi_integer port, const char *intf);
 
 /*!
   Sets the socket to be blocking or nonblocking.

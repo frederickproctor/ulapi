@@ -6,12 +6,14 @@ add_executable(dltest ../src/dltest.c)
 add_executable(semtest ../src/semtest.c)
 add_executable(serialtest ../src/serialtest.c)
 add_executable(sockettest ../src/sockettest.c)
+add_executable(multicasttest ../src/multicasttest.c)
 
 target_link_libraries(ultest ulapi dl pthread)
 target_link_libraries(dltest ulapi dl pthread)
 target_link_libraries(semtest ulapi dl pthread)
 target_link_libraries(serialtest ulapi dl pthread)
 target_link_libraries(sockettest ulapi dl pthread)
+target_link_libraries(multicasttest ulapi dl pthread)
 
 install(FILES
   ../src/inifile.h

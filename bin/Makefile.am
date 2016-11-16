@@ -1,4 +1,4 @@
-bin_PROGRAMS = ultest semtest inifind sockettest serialtest
+bin_PROGRAMS = ultest semtest inifind sockettest serialtest multicasttest
 
 ultest_SOURCES = ../src/ultest.c
 ultest_LDADD = -L../lib -lulapi @PTHREAD_LIBS@ @RTAI_LIBS@
@@ -18,6 +18,10 @@ inifind_CFLAGS = -DINIFILE_MAIN
 sockettest_SOURCES = ../src/sockettest.c
 sockettest_LDADD = -L../lib -lulapi @PTHREAD_LIBS@ @RTAI_LIBS@
 sockettest_DEPENDENCIES = ../lib/libulapi.a
+
+multicasttest_SOURCES = ../src/multicasttest.c
+multicasttest_LDADD = -L../lib -lulapi @PTHREAD_LIBS@ @RTAI_LIBS@
+multicasttest_DEPENDENCIES = ../lib/libulapi.a
 
 if NO_DL
 else

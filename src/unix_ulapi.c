@@ -1177,6 +1177,118 @@ ulapi_socket_get_broadcastee_id(ulapi_integer port)
   return ulapi_socket_get_broadcastee_id_on_interface(port, NULL);
 }
 
+/*
+   Bit -->  0                           31            Address Range:
+           +-+----------------------------+
+           |0|       Class A Address      |       0.0.0.0 - 127.255.255.255
+           +-+----------------------------+
+           +-+-+--------------------------+
+           |1 0|     Class B Address      |     128.0.0.0 - 191.255.255.255
+           +-+-+--------------------------+
+           +-+-+-+------------------------+
+           |1 1 0|   Class C Address      |     192.0.0.0 - 223.255.255.255
+           +-+-+-+------------------------+
+           +-+-+-+-+----------------------+
+           |1 1 1 0|  MULTICAST Address   |     224.0.0.0 - 239.255.255.255
+           +-+-+-+-+----------------------+
+           +-+-+-+-+-+--------------------+
+           |1 1 1 1 0|     Reserved       |     240.0.0.0 - 247.255.255.255
+           +-+-+-+-+-+--------------------+
+
+	   224.0.0.1 = All systems on the subnet
+*/
+
+ulapi_integer
+ulapi_socket_get_multicaster_id(ulapi_integer port)
+{
+  return ulapi_socket_get_multicaster_id_on_interface(port, NULL);
+}
+
+ulapi_integer
+ulapi_socket_get_multicaster_id_on_interface(ulapi_integer port, const char *intf)
+{
+  struct sockaddr_in addr;
+  int fd;
+
+  fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  if (0 > fd) {
+    return -1;
+  }
+
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = AF_INET;
+  if (NULL == intf) {
+    addr.sin_addr.s_addr = inet_addr(ULAPI_SOCKET_DEFAULT_MULTICAST_GROUP);
+  } else {
+    addr.sin_addr.s_addr = inet_addr(intf);
+  }
+  addr.sin_port = htons(port);
+
+  if (-1 == connect(fd, 
+		    (struct sockaddr *) &addr,
+		    sizeof(struct sockaddr_in))) {
+    PERROR("connect");
+    close(fd);
+    return -1;
+  }
+
+  return fd;
+}
+
+ulapi_integer
+ulapi_socket_get_multicastee_id(ulapi_integer port)
+{
+  return ulapi_socket_get_multicastee_id_on_interface(port, NULL);
+}
+
+ulapi_integer
+ulapi_socket_get_multicastee_id_on_interface(ulapi_integer port, const char *intf)
+{
+  struct sockaddr_in addr;
+  struct ip_mreq mreq;
+  int fd;
+  int on = 1;
+
+  fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  if (0 > fd) {
+    PERROR("socket");
+    return -1;
+  }
+
+  if (-1 == 
+      setsockopt(fd,
+		 SOL_SOCKET,
+		 SO_REUSEADDR,
+		 (const char *) &on,
+		 sizeof(on))) {
+    PERROR("setsockopt 1");
+    close(fd);
+    return -1;
+  }
+
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  addr.sin_port = htons(port);
+     
+  if (bind(fd, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
+    PERROR("bind");
+    return -1;
+  }
+
+  if (NULL == intf) {
+    mreq.imr_multiaddr.s_addr = inet_addr(ULAPI_SOCKET_DEFAULT_MULTICAST_GROUP);
+  } else {
+    mreq.imr_multiaddr.s_addr = inet_addr(intf);
+  }
+  mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+  if (setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
+    PERROR("setsockopt 2");
+    return -1;
+  }
+  return fd;
+}
+
 char *
 ulapi_address_to_hostname(ulapi_integer address)
 {

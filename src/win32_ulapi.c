@@ -1311,7 +1311,7 @@ ulapi_socket_get_multicaster_id_on_interface(ulapi_integer port, const char *int
 		    (struct sockaddr *) &addr,
 		    sizeof(struct sockaddr_in))) {
     PERROR("connect");
-    close(fd);
+    closesocket(fd);
     return -1;
   }
 
@@ -1345,7 +1345,7 @@ ulapi_socket_get_multicastee_id_on_interface(ulapi_integer port, const char *int
 		 (const char *) &on,
 		 sizeof(on))) {
     PERROR("setsockopt 1");
-    close(fd);
+    closesocket(fd);
     return -1;
   }
 

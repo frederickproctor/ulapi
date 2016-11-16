@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C++ Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2013 for Windows Desktop
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sockettest", "sockettest\sockettest.vcxproj", "{4F8CEF08-963D-49BC-999D-7749B2B82921}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6E3B2017-6E91-4498-B475-9221EF9B0C1C} = {6E3B2017-6E91-4498-B475-9221EF9B0C1C}
@@ -37,6 +39,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serialtest", "serialtest\se
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ulapi", "ulapi\ulapi.vcxproj", "{6E3B2017-6E91-4498-B475-9221EF9B0C1C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "multicasttest", "multicasttest\multicasttest.vcxproj", "{CB418EDB-5364-45D9-98DD-A560CD7DBEE0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6E3B2017-6E91-4498-B475-9221EF9B0C1C} = {6E3B2017-6E91-4498-B475-9221EF9B0C1C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +83,10 @@ Global
 		{6E3B2017-6E91-4498-B475-9221EF9B0C1C}.Debug|Win32.Build.0 = Debug|Win32
 		{6E3B2017-6E91-4498-B475-9221EF9B0C1C}.Release|Win32.ActiveCfg = Release|Win32
 		{6E3B2017-6E91-4498-B475-9221EF9B0C1C}.Release|Win32.Build.0 = Release|Win32
+		{CB418EDB-5364-45D9-98DD-A560CD7DBEE0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CB418EDB-5364-45D9-98DD-A560CD7DBEE0}.Debug|Win32.Build.0 = Debug|Win32
+		{CB418EDB-5364-45D9-98DD-A560CD7DBEE0}.Release|Win32.ActiveCfg = Release|Win32
+		{CB418EDB-5364-45D9-98DD-A560CD7DBEE0}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

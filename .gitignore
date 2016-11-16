@@ -18,6 +18,7 @@ bin/Makefile.in
 bin/dlfuncs.so
 bin/dltest
 bin/inifind
+bin/multicasttest
 bin/semtest
 bin/serial
 bin/serialtest

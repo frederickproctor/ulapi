@@ -1290,11 +1290,19 @@ ulapi_socket_get_multicaster_id(ulapi_integer port)
 ulapi_integer
 ulapi_socket_get_multicaster_id_on_interface(ulapi_integer port, const char *intf)
 {
+  WSADATA wsaData;
+  int iResult;
   struct sockaddr_in addr;
   int fd;
 
-  fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+  if (iResult != 0) {
+	  return -1;
+  }
+
+  fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if (0 > fd) {
+	  PERROR("socket");
     return -1;
   }
 
@@ -1327,10 +1335,17 @@ ulapi_socket_get_multicastee_id(ulapi_integer port)
 ulapi_integer
 ulapi_socket_get_multicastee_id_on_interface(ulapi_integer port, const char *intf)
 {
+  WSADATA wsaData;
+  int iResult;
   struct sockaddr_in addr;
   struct ip_mreq mreq;
   int fd;
   int on = 1;
+
+  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+  if (iResult != 0) {
+	  return -1;
+  }
 
   fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if (0 > fd) {

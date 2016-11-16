@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
       return 1;
     }
     while (1) {
+      memset(buffer, 0, sizeof(buffer));
       nchars = ulapi_socket_read(fd, buffer, sizeof(buffer));
       if (nchars <= 0) break;
       printf("%s\n", buffer);
@@ -90,6 +91,7 @@ int main(int argc, char *argv[])
       return 1;
     }
     while (! feof(stdin)) {
+      memset(buffer, 0, sizeof(buffer));
       if (NULL == fgets(buffer, sizeof(buffer), stdin)) break;
       ulapi_socket_write(fd, buffer, strlen(buffer));
     }

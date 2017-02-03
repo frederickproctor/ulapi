@@ -1145,10 +1145,22 @@ ulapi_socket_get_broadcastee_id_on_interface(ulapi_integer port, const char *int
   struct sockaddr_in addr;
   int fd;
   int retval;
+  int on = 1;
 
   /* Create a best-effort datagram socket using UDP */
   fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if (0 > fd) {
+    return -1;
+  }
+
+  if (-1 == 
+      setsockopt(fd,
+		 SOL_SOCKET,
+		 SO_REUSEADDR,
+		 (const char *) &on,
+		 sizeof(on))) {
+    PERROR("setsockopt 1");
+    close(fd);
     return -1;
   }
 

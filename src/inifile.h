@@ -24,11 +24,14 @@ typedef struct {
 
 #ifdef __cplusplus
 extern "C" {
+#if 0
+}
+#endif
 #endif
 
 extern const char * ini_find(FILE * fp,	/* already opened file ptr */
-			    const char * tag,	/* string to find */
-			    const char * section);	/* section it's in */
+			     const char * tag,	/* string to find */
+			     const char * section);	/* section it's in */
 
 extern int ini_section(FILE * fp,	/* already opened file ptr */
 		       const char * section,	/* section you want */
@@ -37,7 +40,12 @@ extern int ini_section(FILE * fp,	/* already opened file ptr */
 
 extern int ini_match(const char * match, const char * me);
 
+extern int ini_has_section(FILE *fp, const char *section);
+
 #ifdef __cplusplus
+#if 0
+{
+#endif
 }
 #endif
 

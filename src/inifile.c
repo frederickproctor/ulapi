@@ -118,6 +118,11 @@ static int find_section(FILE *fp, const char *section)
   return -1;
 }
 
+int ini_has_section(FILE *fp, const char *section)
+{
+  return find_section(fp, section) == 0 ? 1 : 0;
+}
+
 int ini_match(const char * match, const char * me)
 {
   while (*me != 0) if (toupper(*match++) != toupper(*me++)) return 0;

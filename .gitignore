@@ -15,6 +15,7 @@ bin/cmake_install.cmake
 bin/Makefile
 bin/Makefile.am
 bin/Makefile.in
+bin/broadcasttest
 bin/dlfuncs.so
 bin/dltest
 bin/inifind

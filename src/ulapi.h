@@ -546,7 +546,7 @@ extern void *ulapi_dl_sym(void *handle, const char *name, char *errstr, int errl
   the program return value in 'result'. Otherwise, returns ULAPI_ERROR
   and leaves 'result' alone.
 */
-extern ulapi_result ulapi_system(const char *prog, int *result);
+extern ulapi_result ulapi_system(const char *prog, ulapi_integer *result);
 
 #define ulapi_print printf
 #ifdef WIN32

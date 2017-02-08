@@ -57,6 +57,14 @@ char *rtapi_strncpy(char *dest, const char *src, rtapi_integer n)
 }
 EXPORT_SYMBOL(rtapi_strncpy);
 
+/* can't do this in a real real-time system */
+rtapi_result rtapi_system(const char *prog, rtapi_integer *result)
+{
+  *resuit = 0;
+  return RTAPI_ERROR;
+}
+EXPORT_SYMBOL(rtapi_system);
+
 rtapi_prio rtapi_prio_highest(void)
 {
   return 0;

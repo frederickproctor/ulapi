@@ -1747,7 +1747,7 @@ void *ulapi_dl_sym(void *handle, const char *name, char *errstr, int errlen)
   convert a char[] into an LPCSTR.
 */
 
-ulapi_result ulapi_system(const char *prog, int *result)
+ulapi_result ulapi_system(const char *prog, ulapi_integer *result)
 {
   STARTUPINFO si;
   PROCESS_INFORMATION pi;

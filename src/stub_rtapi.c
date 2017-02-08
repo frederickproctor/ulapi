@@ -26,6 +26,19 @@ char *rtapi_strncpy(char *dest, const char *src, rtapi_integer n)
   return dest;
 }
 
+rtapi_result rtapi_system(const char *prog, rtapi_integer *result)
+{
+  int retval;
+
+  retval = system(prog) >> 8;
+
+  if (127 == retval) return RTAPI_ERROR;
+
+  *result = retval;
+
+  return RTAPI_OK;
+}
+
 rtapi_prio rtapi_prio_highest(void)
 {
   return 1;

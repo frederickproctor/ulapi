@@ -45,6 +45,22 @@ char *rtapi_strncpy(char *dest, const char *src, rtapi_integer n)
   return dest;
 }
 
+rtapi_result rtapi_system(const char *prog, rtapi_integer *result)
+{
+  ulapi_result u_ret;
+  ulapi_integer u_res;
+
+  u_ret = ulapi_system(prog, &u_res);
+
+  if (ULAPI_OK == u_ret) {
+    *result = u_res;
+    return RTAPI_OK;
+  }
+
+  *result = 0;
+  return RTAPI_ERROR;
+}
+
 static rtapi_integer _rtapi_wait_offset_nsec = 0;
 
 /*

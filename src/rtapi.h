@@ -359,6 +359,14 @@ extern rtapi_result rtapi_serial_close(void *id);
 #define rtapi_strcasecmp strcasecmp
 #endif
 
+/*!
+  Intended for real-time controllers that execute in normal user space.
+  Executes 'prog'. Returns RTAPI_OK if it was able to execute, placing
+  the program return value in 'result'. Otherwise, returns ULAPI_ERROR
+  and leaves 'result' alone.
+*/
+extern rtapi_result rtapi_system(const char *prog, rtapi_integer *result);
+
 #ifdef __cplusplus
 #if 0
 {			  /* just to match one below, for indenters */

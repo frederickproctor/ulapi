@@ -1738,7 +1738,7 @@ void *ulapi_dl_sym(void *handle, const char *name, char *errstr, int errlen)
 
 #endif
 
-ulapi_result ulapi_system(const char *prog, int *result)
+ulapi_result ulapi_system(const char *prog, ulapi_integer *result)
 {
   int retval;
 

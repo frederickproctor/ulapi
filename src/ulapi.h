@@ -305,6 +305,7 @@ extern ulapi_result ulapi_rtm_delete(void *shm);
   Returns the integer socket descriptor for later sends and receives.
 */
 extern ulapi_integer ulapi_socket_get_client_id(ulapi_integer port, const char *host);
+extern ulapi_integer ulapi_socket_get_client_id_on_interface(ulapi_integer port, const char *hostname, const char *intf);
 
 /*!
   Creates a server connection to the \a port. Returns the integer
@@ -313,7 +314,7 @@ extern ulapi_integer ulapi_socket_get_client_id(ulapi_integer port, const char *
 */
 extern ulapi_integer ulapi_socket_get_server_id(ulapi_integer port);
 /*! Equivalent to ulapi_socket_get_server_id but with a specified interface. */
-extern ulapi_integer ulapi_socket_get_server_id_on_interface(ulapi_integer port, const char *intf);
+extern ulapi_socket_get_server_id_on_interface(ulapi_integer port, const char *intf);
 
 /*!
   Called by a server to gets a connection from a client. Returns the

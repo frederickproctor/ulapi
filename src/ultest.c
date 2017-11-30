@@ -194,16 +194,21 @@ static ulapi_result test_gethostname(void)
 
 static ulapi_result test_fd_stat(const char *path)
 {
+	char *tn;
+	char *base;
   ulapi_result retval;
-  const char *tn;
 
   if (NULL == path) {
     tn = tmpnam(NULL);
-    if (NULL == fopen(tn, "w")) {
+	base = malloc(strlen(tn) + 2);
+	ulapi_basename(tn, base);
+	
+	printf("creating ``%s''\n", base);
+    if (NULL == fopen(base, "w")) {
       return ULAPI_ERROR;
     }
-    retval = ulapi_fd_stat(tn);
-    remove(tn);
+    retval = ulapi_fd_stat(base);
+    remove(base);
   } else {
     retval = ulapi_fd_stat(path);
   }
@@ -345,6 +350,19 @@ int main(int argc, char *argv[])
 
   ulapi_set_debug(ULAPI_DEBUG_ALL);
 
+  retval = test_fd_stat(NULL);
+  if (ULAPI_OK != retval) {
+	  ulapi_print("ultest fd stat test failed on temp file\n");
+	  return 1;
+  }
+  ulapi_print("ultest fd stat test passed\n");
+  retval = test_fd_stat("nofile");
+  if (ULAPI_OK == retval) {
+	  ulapi_print("ultest fd stat test failed on no file\n");
+	  return 1;
+  }
+
+
   retval = test_process();
   if (ULAPI_OK != retval) {
     ulapi_print("ultest process test failed\n");
@@ -381,19 +399,6 @@ int main(int argc, char *argv[])
     return 1;
   }
   ulapi_print("ultest gethostname test passed\n");
-
-  retval = test_fd_stat(NULL);
-  if (ULAPI_OK != retval) {
-    ulapi_print("ultest fd stat test failed on %s\n", argv[0]);
-    return 1;
-  }
-  ulapi_print("ultest fd stat test passed\n");
-  retval = test_fd_stat("nofile");
-  if (ULAPI_OK == retval) {
-    ulapi_print("ultest fd stat test failed on no file\n");
-    return 1;
-  }
-
   retval = test_sxprintf();
   if (ULAPI_OK != retval) {
     ulapi_print("ultest sxprintf test failed\n");

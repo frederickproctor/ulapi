@@ -218,7 +218,6 @@ static ulapi_result test_fd_stat(const char *path)
 #define WAIT_TEN_PROC "/bin/ping -c 10 127.0.0.1"
 #define FALSE_PROC "/bin/false"
 #endif
-#define NO_PROC "/"
 
 static ulapi_result test_process(void)
 {
@@ -226,22 +225,6 @@ static ulapi_result test_process(void)
   ulapi_integer is_done;
   ulapi_integer result;
   ulapi_result retval;
-
-  /* start a bogus process */
-  ph = ulapi_process_new();
-  if (NULL == ph) return ULAPI_ERROR;
-  printf("starting bogus process, expect an error:\n");
-  retval = ulapi_process_start(ph, NO_PROC);
-  /* we are the parent */
-  if (ULAPI_OK != retval) return ULAPI_ERROR; /* the 'fork' failed */
-  ulapi_sleep(1);
-  is_done = ulapi_process_done(ph, &result);
-  if (is_done) {
-    printf("bogus process returned with result %d\n", (int) result);
-  } else {
-    printf("bogus process is unexpectedly still running\n");
-    return ULAPI_ERROR;
-  }
 
   /* start a ten-second process */
   ph = ulapi_process_new();

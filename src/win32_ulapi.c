@@ -21,6 +21,7 @@
 #include <stdlib.h>		/* malloc, free */
 #include <ctype.h>		/* isspace */
 #include <string.h>		/* strcpy, strrchr */
+#include <stdarg.h>		/* va_list, va_start */
 #include <time.h>		/* clock, CLK_TCK */
 #include <windows.h>
 #include <winbase.h>
@@ -29,6 +30,22 @@
 #include "ulapi.h"
 
 static ulapi_integer ulapi_debug_level = 0;
+
+ulapi_result ulapi_sxprintf(char **buffer, size_t *buffer_size, const char *fmt, ...)
+{
+  va_list ap;
+
+  va_start(ap, fmt);
+
+  while (vsnprintf(*buffer, *buffer_size, fmt, ap) >= *buffer_size) {
+    va_start(ap, fmt);		/* ap has been moved, so reset it */
+    *buffer_size *= 2;
+    *buffer = realloc(*buffer, *buffer_size);
+    if (NULL == *buffer) return ULAPI_ERROR;
+  }
+
+  return ULAPI_OK;
+}
 
 ulapi_result ulapi_init(void)
 {

@@ -8,6 +8,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <stdio.h>		/* tmpnam */
 #include <stddef.h>		/* NULL, sizeof */
 #include <stdlib.h>		/* malloc */
 #include <math.h>		/* fabs */
@@ -193,7 +194,21 @@ static ulapi_result test_gethostname(void)
 
 static ulapi_result test_fd_stat(const char *path)
 {
-  return ulapi_fd_stat(path);
+  ulapi_result retval;
+  const char *tn;
+
+  if (NULL == path) {
+    tn = tmpnam(NULL);
+    if (NULL == fopen(tn, "w")) {
+      return ULAPI_ERROR;
+    }
+    retval = ulapi_fd_stat(tn);
+    remove(tn);
+  } else {
+    retval = ulapi_fd_stat(path);
+  }
+  
+  return retval;
 }
 
 #ifdef WIN32
@@ -294,6 +309,22 @@ static ulapi_result test_process(void)
   return retval;
 }
 
+static ulapi_result test_sxprintf(void)
+{
+  size_t buffer_size = 1;
+  char *buffer = NULL;
+
+  buffer = realloc(buffer, buffer_size);
+  if (NULL == buffer) return ULAPI_ERROR;
+
+  if (ULAPI_OK != ulapi_sxprintf(&buffer, &buffer_size, "%d %s", 123, "this is a test")) return ULAPI_ERROR;
+
+  if (32 != buffer_size) return ULAPI_ERROR;
+  if (0 != strcmp(buffer, "123 this is a test")) return ULAPI_ERROR;
+
+  return ULAPI_OK;
+}
+
 int main(int argc, char *argv[])
 {
   enum {BUFFERLEN = 80};
@@ -368,7 +399,7 @@ int main(int argc, char *argv[])
   }
   ulapi_print("ultest gethostname test passed\n");
 
-  retval = test_fd_stat(argv[0]);
+  retval = test_fd_stat(NULL);
   if (ULAPI_OK != retval) {
     ulapi_print("ultest fd stat test failed on %s\n", argv[0]);
     return 1;
@@ -379,6 +410,13 @@ int main(int argc, char *argv[])
     ulapi_print("ultest fd stat test failed on no file\n");
     return 1;
   }
+
+  retval = test_sxprintf();
+  if (ULAPI_OK != retval) {
+    ulapi_print("ultest sxprintf test failed\n");
+    return 1;
+  }
+  ulapi_print("ultest sxprintf test passed\n");
 
   ulapi_print("all tests passed\n");
 

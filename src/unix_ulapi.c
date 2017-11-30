@@ -17,6 +17,7 @@
 #include <stddef.h>		/* NULL */
 #include <stdlib.h>		/* malloc */
 #include <string.h>		/* memset */
+#include <stdarg.h>		/* va_list, va_start */
 #include <signal.h>		/* kill, SIGINT */
 #include <ctype.h>		/* isspace */
 #include <errno.h>
@@ -46,6 +47,22 @@
 static ulapi_integer ulapi_debug_level = 0;
 
 #define PERROR(x) if (ulapi_debug_level & ULAPI_DEBUG_ERROR) perror(x)
+
+ulapi_result ulapi_sxprintf(char **buffer, size_t *buffer_size, const char *fmt, ...)
+{
+  va_list ap;
+
+  va_start(ap, fmt);
+
+  while (vsnprintf(*buffer, *buffer_size, fmt, ap) >= *buffer_size) {
+    va_start(ap, fmt);		/* ap has been moved, so reset it */
+    *buffer_size *= 2;
+    *buffer = realloc(*buffer, *buffer_size);
+    if (NULL == *buffer) return ULAPI_ERROR;
+  }
+
+  return ULAPI_OK;
+}
 
 static ulapi_integer _ulapi_wait_offset_nsec = 1;
 

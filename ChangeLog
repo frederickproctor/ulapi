@@ -1,3 +1,7 @@
+1.7	30 November 2017
+	Added ulapi_sxprintf for extending the strings for variable
+	printing; updated ultest to create temp files for the fd test
+
 1.6	12 February 2016
 	Integrated getopt as ulapi_getopt, eliminating extra code and
 	header; changed ulapi_process_start to use ulapi_to_argv

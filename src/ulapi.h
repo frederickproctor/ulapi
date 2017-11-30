@@ -567,6 +567,11 @@ extern ulapi_result ulapi_system(const char *prog, ulapi_integer *result);
 #endif
 
 /*!
+  Prints a formatted string to the heap-allocated \a buffer of starting size \a buffer_size, growing \a buffer and updating its \a buffer_size so that the string fully prints with no truncation. Returns 0 if successful, -1 if not.
+*/
+extern ulapi_result ulapi_sxprintf(char **buffer, size_t *buffer_size, const char *fmt, ...);
+
+/*!
   Returns non-zero if the path has a path separator in it, otherwise
   it returns zero, signifying a simple file name with no path.
 */

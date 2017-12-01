@@ -572,6 +572,11 @@ extern ulapi_result ulapi_system(const char *prog, ulapi_integer *result);
 extern ulapi_result ulapi_sxprintf(char **buffer, size_t *buffer_size, const char *fmt, ...);
 
 /*!
+  Concatenates string in \a src to that in \dst, growing \a dest if needed and updating its \a dst_size.
+*/
+extern int ulapi_strxcat(char **dst, size_t *dst_size, const char *src);
+
+/*!
   Returns non-zero if the path has a path separator in it, otherwise
   it returns zero, signifying a simple file name with no path.
 */

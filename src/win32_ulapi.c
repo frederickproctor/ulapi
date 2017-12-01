@@ -47,6 +47,25 @@ ulapi_result ulapi_sxprintf(char **buffer, size_t *buffer_size, const char *fmt,
   return ULAPI_OK;
 }
 
+int ulapi_strxcat(char **dst, size_t *dst_size, const char *src)
+{
+  size_t dst_len;
+  size_t dst_left;
+  size_t src_len;
+
+  dst_len = strlen(*dst);
+  dst_left = *dst_size - dst_len;
+  src_len = strlen(src);
+
+  if (dst_left <= src_len) {
+    *dst_size = dst_len + src_len + 1; /* +1 for the terminating null */
+    *dst = realloc(*dst, *dst_size);
+  }
+  strcat(*dst, src);
+
+  return 0;
+}
+
 ulapi_result ulapi_init(void)
 {
   return ULAPI_OK;

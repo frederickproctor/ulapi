@@ -30,6 +30,15 @@ extern "C" {
 #endif
 #endif
 
+/* C99 supports multi-byte characters, implementation-defined */
+#if 'AB' == 0x4142
+#define IS_BIG_ENDIAN 0
+#define IS_LITTLE_ENDIAN 1
+#else
+#define IS_BIG_ENDIAN 1
+#define IS_LITTLE_ENDIAN 0
+#endif
+
 /* make sure we have enough string space to print numbers as strings */
 #ifndef DIGITS_IN
 #define DIGITS_IN(x) (sizeof(x) * 3 + 1)

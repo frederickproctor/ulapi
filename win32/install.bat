@@ -1,3 +1,5 @@
+REM Run this in an administrator shell:
+REM 'cmd' Shift+Ctrl+Enter, cd to here, 'install.bat'
 
 @ECHO ON
 @ECHO %CD%

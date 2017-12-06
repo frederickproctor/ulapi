@@ -309,8 +309,6 @@ static ulapi_result test_sxprintf(void)
     return ULAPI_ERROR;
   }
 
-  if (19 != buffer_size) return ULAPI_ERROR;
-
   if (0 != strcmp(buffer, "123 this is a test")) return ULAPI_ERROR;
 
   return ULAPI_OK;

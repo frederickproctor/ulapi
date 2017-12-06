@@ -34,23 +34,18 @@ static ulapi_integer ulapi_debug_level = 0;
 ulapi_result ulapi_sxprintf(char **buffer, size_t *buffer_size, const char *fmt, ...)
 {
   va_list ap;
-  size_t res;
+  int res;
 
   va_start(ap, fmt);
 
-  res = vsnprintf(*buffer, *buffer_size, fmt, ap);
-  if (res >= *buffer_size) {
-    *buffer_size = res + 1;
+  while ((res = vsnprintf(*buffer, *buffer_size, fmt, ap)) < 0 || res >= *buffer_size) {
+    *buffer_size *= 2;
+	printf("bing %d\n", *buffer_size);
     *buffer = realloc(*buffer, *buffer_size);
     if (NULL == *buffer) {
       return ULAPI_ERROR;
     }
     va_start(ap, fmt);		/* ap has been moved, so reset it */
-    res = vsnprintf(*buffer, *buffer_size, fmt, ap);
-    if (res >= *buffer_size) {
-      /* hmmm, can't write even the correct size */
-      return ULAPI_ERROR;
-    }
   }
 
   return ULAPI_OK;

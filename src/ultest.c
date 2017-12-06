@@ -305,9 +305,12 @@ static ulapi_result test_sxprintf(void)
   buffer = realloc(buffer, buffer_size);
   if (NULL == buffer) return ULAPI_ERROR;
 
-  if (ULAPI_OK != ulapi_sxprintf(&buffer, &buffer_size, "%d %s", 123, "this is a test")) return ULAPI_ERROR;
+  if (ULAPI_OK != ulapi_sxprintf(&buffer, &buffer_size, "%d %s", 123, "this is a test")) {
+    return ULAPI_ERROR;
+  }
 
-  if (32 != buffer_size) return ULAPI_ERROR;
+  if (19 != buffer_size) return ULAPI_ERROR;
+
   if (0 != strcmp(buffer, "123 this is a test")) return ULAPI_ERROR;
 
   return ULAPI_OK;
@@ -336,6 +339,15 @@ int main(int argc, char *argv[])
 	     (NULL != fgets(inbuf, sizeof(inbuf)-1, stdin))) {
 	ulapi_print("%s\n", ulapi_dirname(inbuf, outbuf));
       }
+    } else if (! strcmp(argv[1], "x")) {
+      /* add simple local test here */
+      retval = test_sxprintf();
+      if (ULAPI_OK != retval) {
+	ulapi_print("ultest sxprintf test failed\n");
+	return 1;
+      }
+      ulapi_print("ultest sxprintf test passed\n");
+      return 0;
     } else {
       ulapi_print("unknown argument: %s\n", argv[1]);
       retval = 1;

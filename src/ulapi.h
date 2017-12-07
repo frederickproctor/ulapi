@@ -81,6 +81,15 @@ typedef double ulapi_real;
   program. */
 extern ulapi_real ulapi_time(void);
 
+/*!
+  Returns a string version of the current time, e.g., 
+  "1970-01-01T00:00:00Z", 
+  putting the result in \a dst up to \size characters, or filling in a
+  static string if \a dst is NULL and no re-entrancy is needed.
+  Returns a pointer to the filled-in string.
+*/
+extern const char *ulapi_time_string(char *dst, size_t size);
+
 /*! Puts the calling thread to sleep for a period of \a secs seconds. */
 extern void ulapi_sleep(ulapi_real secs);
 
@@ -323,7 +332,7 @@ extern ulapi_integer ulapi_socket_get_client_id_on_interface(ulapi_integer port,
 */
 extern ulapi_integer ulapi_socket_get_server_id(ulapi_integer port);
 /*! Equivalent to ulapi_socket_get_server_id but with a specified interface. */
-extern ulapi_socket_get_server_id_on_interface(ulapi_integer port, const char *intf);
+extern ulapi_integer ulapi_socket_get_server_id_on_interface(ulapi_integer port, const char *intf);
 
 /*!
   Called by a server to gets a connection from a client. Returns the

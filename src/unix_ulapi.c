@@ -60,16 +60,19 @@ ulapi_result ulapi_sxprintf(char **buffer, size_t *buffer_size, const char *fmt,
     *buffer_size = res + 1;
     *buffer = realloc(*buffer, *buffer_size);
     if (NULL == *buffer) {
+      va_end(ap);
       return ULAPI_ERROR;
     }
     va_start(ap, fmt);		/* ap has been moved, so reset it */
     res = vsnprintf(*buffer, *buffer_size, fmt, ap);
     if (res >= *buffer_size) {
       /* hmmm, can't write even the correct size */
+      va_end(ap);
       return ULAPI_ERROR;
     }
   }
 
+  va_end(ap);
   return ULAPI_OK;
 }
 
@@ -146,6 +149,35 @@ ulapi_real ulapi_time(void)
   gettimeofday(&tv, NULL);
   return (ulapi_real) (((double) tv.tv_sec) + ((double) tv.tv_usec) * 1.0e-6);
 #endif
+}
+
+const char *ulapi_time_string(char *dst, size_t size)
+{
+  static char ldst[] = "1970-01-01T00:00:00Z padded";
+  char *tdst = ldst;
+  size_t tsize = sizeof(ldst);
+  time_t tp;
+  struct tm *stmp;
+
+  if (-1 == time(&tp)) {
+    return NULL;
+  }
+
+  stmp = gmtime(&tp);
+  if (NULL == stmp) {
+    return NULL;
+  }
+
+  if (NULL != dst) {
+    tdst = dst;
+    tsize = size;
+  }
+
+  if (0 == strftime(tdst, tsize, "%Y-%m-%dT%H:%M:%SZ", stmp)) {
+    return NULL;
+  }
+
+  return tdst;
 }
 
 void ulapi_sleep(ulapi_real secs)

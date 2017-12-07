@@ -314,6 +314,27 @@ static ulapi_result test_sxprintf(void)
   return ULAPI_OK;
 }
 
+static ulapi_result test_time_string(void)
+{
+  char buffer[] = "1970-01-01T00:00:00Z";
+  const char *ptr;
+  size_t len = sizeof(buffer);
+
+  ptr = ulapi_time_string(NULL, 0);
+  if (NULL == ptr) return ULAPI_ERROR;
+  /* some heuristics */
+  if (ptr[0] != '2' || ptr[strlen(ptr)-1] != 'Z') return ULAPI_ERROR;
+
+  ptr = ulapi_time_string(buffer, len);
+  if (NULL == ptr) return ULAPI_ERROR;
+  if (ptr[0] != '2' || ptr[strlen(ptr)-1] != 'Z') return ULAPI_ERROR;
+  if (buffer[0] != '2' || buffer[strlen(buffer)-1] != 'Z') return ULAPI_ERROR;
+
+  printf("Time string is %s\n", ptr);
+
+  return ULAPI_OK;
+}
+
 int main(int argc, char *argv[])
 {
   enum {BUFFERLEN = 80};
@@ -337,7 +358,7 @@ int main(int argc, char *argv[])
 	     (NULL != fgets(inbuf, sizeof(inbuf)-1, stdin))) {
 	ulapi_print("%s\n", ulapi_dirname(inbuf, outbuf));
       }
-    } else if (! strcmp(argv[1], "x")) {
+    } else if (! strcmp(argv[1], "1")) {
       /* add simple local test here */
       retval = test_sxprintf();
       if (ULAPI_OK != retval) {
@@ -345,6 +366,15 @@ int main(int argc, char *argv[])
 	return 1;
       }
       ulapi_print("ultest sxprintf test passed\n");
+      return 0;
+    } else if (! strcmp(argv[1], "2")) {
+      /* ditto */
+      retval = test_time_string();
+      if (ULAPI_OK != retval) {
+	ulapi_print("ultest time_string test failed\n");
+	return 1;
+      }
+      ulapi_print("ultest time_string test passed\n");
       return 0;
     } else {
       ulapi_print("unknown argument: %s\n", argv[1]);
@@ -408,12 +438,20 @@ int main(int argc, char *argv[])
     return 1;
   }
   ulapi_print("ultest gethostname test passed\n");
+
   retval = test_sxprintf();
   if (ULAPI_OK != retval) {
     ulapi_print("ultest sxprintf test failed\n");
     return 1;
   }
   ulapi_print("ultest sxprintf test passed\n");
+
+  retval = test_time_string();
+  if (ULAPI_OK != retval) {
+    ulapi_print("ultest time string test failed\n");
+    return 1;
+  }
+  ulapi_print("ultest time string test passed\n");
 
   ulapi_print("all tests passed\n");
 

@@ -40,14 +40,15 @@ ulapi_result ulapi_sxprintf(char **buffer, size_t *buffer_size, const char *fmt,
 
   while ((res = vsnprintf(*buffer, *buffer_size, fmt, ap)) < 0 || res >= *buffer_size) {
     *buffer_size *= 2;
-	printf("bing %d\n", *buffer_size);
     *buffer = realloc(*buffer, *buffer_size);
     if (NULL == *buffer) {
+      va_end(ap);
       return ULAPI_ERROR;
     }
     va_start(ap, fmt);		/* ap has been moved, so reset it */
   }
 
+  va_end(ap);
   return ULAPI_OK;
 }
 
@@ -157,6 +158,35 @@ ulapi_real ulapi_time(void)
   clock_gettime(&tv);
 
   return (ulapi_real) (((double) tv.tv_sec) + ((double) tv.tv_usec) * 1.0e-6);
+}
+
+const char *ulapi_time_string(char *dst, size_t size)
+{
+  static char ldst[] = "1970-01-01T00:00:00Z padded";
+  char *tdst = ldst;
+  size_t tsize = sizeof(ldst);
+  time_t tp;
+  struct tm *stmp;
+
+  if (-1 == time(&tp)) {
+    return NULL;
+  }
+
+  stmp = gmtime(&tp);
+  if (NULL == stmp) {
+    return NULL;
+  }
+
+  if (NULL != dst) {
+    tdst = dst;
+    tsize = size;
+  }
+
+  if (0 == strftime(tdst, tsize, "%Y-%m-%dT%H:%M:%SZ", stmp)) {
+    return NULL;
+  }
+
+  return tdst;
 }
 
 void ulapi_sleep(ulapi_real secs)

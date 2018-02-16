@@ -1,5 +1,6 @@
 *~
 *.tar.gz
+*.bak
 Makefile
 Makefile.in
 aclocal.m4
@@ -8,6 +9,7 @@ CMakeLists.txt
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
+doxygen-doc/
 install_manifest.txt
 bin/.deps/
 bin/CMakeFiles/

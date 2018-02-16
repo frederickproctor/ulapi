@@ -84,7 +84,7 @@ extern ulapi_real ulapi_time(void);
 /*!
   Returns a string version of the current time, e.g., 
   "1970-01-01T00:00:00Z", 
-  putting the result in \a dst up to \size characters, or filling in a
+  putting the result in \a dst up to \a size characters, or filling in a
   static string if \a dst is NULL and no re-entrancy is needed.
   Returns a pointer to the filled-in string.
 */
@@ -590,7 +590,7 @@ extern ulapi_result ulapi_system(const char *prog, ulapi_integer *result);
 extern ulapi_result ulapi_sxprintf(char **buffer, size_t *buffer_size, const char *fmt, ...);
 
 /*!
-  Concatenates string in \a src to that in \dst, growing \a dest if needed and updating its \a dst_size.
+  Concatenates string in \a src to that in \a dst, growing \a dst if needed and updating its \a dst_size.
 */
 extern int ulapi_strxcat(char **dst, size_t *dst_size, const char *src);
 

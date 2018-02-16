@@ -40,6 +40,3 @@ puts the header files and library in C:\Program Files\ulapi.
 to be compiled with the path to Ulapi, so in your own solution, make
 sure to add the include path and library path to C:\Program
 Files\ulapi\include and \lib.
-
-6. See the HTML documentation in doxygen-doc/html/index.html for many
-more details on the software.

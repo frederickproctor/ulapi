@@ -42,6 +42,3 @@ to be compiled with the path to Ulapi, e.g.,
 
    gcc yourfile.c -I/usr/local/ulapi/include -L/usr/local/ulapi/lib -lulapi
 
-4. See the HTML documentation in doxygen-doc/html/index.html for many
-more details on the software.
-

@@ -1,1 +1,17 @@
+Guide to installing RTAI real-time Linux
+----------------------------------------
+The INSTALL file has general instructions for compiling software built
+using Autotools, as Ulapi has been. A summary, and more specific
+instructions, follow here.
 
+1. Obtain and unpack the Ulapi distribution, which you have
+probably already done if you're reading this README. This would have
+been something like this:
+
+you> tar xzvf ulapi-1.X.tar.gz
+you> cd ulapi-1.X
+you> ./configure
+you> make
+you> make install prefix=/usr/local/ulapi
+
+2. Run the test:

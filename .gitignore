@@ -51,6 +51,11 @@ src/.dirstamp
 src/Makefile
 src/Makefile.in
 src/*.o
-
-
-
+rtaidir
+rtlib/.*
+rtlib/Module.symvers
+rtlib/modules.order
+rtlib/*.c
+rtlib/*.h
+rtlib/*.ko
+rtlib/*.o

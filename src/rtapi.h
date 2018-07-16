@@ -140,11 +140,12 @@ typedef ulapi_mutex_struct rtapi_mutex_struct;
 
 #else
 
-#ifdef HAVE_RTAI
+#ifdef __IN_RTAI__
 
 #include <rtai_sched.h>		/* RT_TASK */
-
+#include <rtai_sem.h>		/* SEM */
 typedef RT_TASK rtapi_task_struct;
+typedef SEM rtapi_mutex_struct;
 
 #else
 

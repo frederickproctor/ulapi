@@ -60,7 +60,7 @@ EXPORT_SYMBOL(rtapi_strncpy);
 /* can't do this in a real real-time system */
 rtapi_result rtapi_system(const char *prog, rtapi_integer *result)
 {
-  *resuit = 0;
+  *result = 0;
   return RTAPI_ERROR;
 }
 EXPORT_SYMBOL(rtapi_system);
@@ -150,13 +150,13 @@ rtapi_result rtapi_clock_get_interval(rtapi_integer start_secs,
 }
 EXPORT_SYMBOL(rtapi_clock_get_interval);
 
-void *rtapi_task_new(void)
+rtapi_task_struct *rtapi_task_new(void)
 {
   return (void *) kmalloc(sizeof(RT_TASK), GFP_USER);
 }
 EXPORT_SYMBOL(rtapi_task_new);
 
-rtapi_result rtapi_task_delete(void *task)
+rtapi_result rtapi_task_delete(rtapi_task_struct *task)
 {
   if (0 == task) {
     return RTAPI_ERROR;
@@ -227,7 +227,7 @@ rt_task_stack_check(RT_TASK *task)
 
 #endif
 
-rtapi_integer rtapi_task_stack_check(void *task)
+rtapi_integer rtapi_task_stack_check(rtapi_task_struct *task)
 {
 #ifdef CHECK_STACK
   return (rtapi_integer) rt_task_stack_check((RT_TASK *) task);
@@ -237,7 +237,7 @@ rtapi_integer rtapi_task_stack_check(void *task)
 }
 EXPORT_SYMBOL(rtapi_task_stack_check);
 
-rtapi_result rtapi_task_start(void *task,
+rtapi_result rtapi_task_start(rtapi_task_struct *task,
 			      void (*taskcode)(void *),
 			      void *taskarg,
 			      rtapi_prio prio,
@@ -272,25 +272,25 @@ rtapi_result rtapi_task_start(void *task,
 }
 EXPORT_SYMBOL(rtapi_task_start);
 
-rtapi_result rtapi_task_stop(void *task)
+rtapi_result rtapi_task_stop(rtapi_task_struct *task)
 {
   return (rt_task_delete((RT_TASK *) task) == 0 ? RTAPI_OK : RTAPI_ERROR);
 }
 EXPORT_SYMBOL(rtapi_task_stop);
 
-rtapi_result rtapi_task_pause(void *task)
+rtapi_result rtapi_task_pause(rtapi_task_struct *task)
 {
   return (rt_task_suspend((RT_TASK *) task) == 0 ? RTAPI_OK : RTAPI_ERROR);
 }
 EXPORT_SYMBOL(rtapi_task_pause);
 
-rtapi_result rtapi_task_resume(void *task)
+rtapi_result rtapi_task_resume(rtapi_task_struct *task)
 {
   return (rt_task_resume((RT_TASK *) task) == 0 ? RTAPI_OK : RTAPI_ERROR);
 }
 EXPORT_SYMBOL(rtapi_task_resume);
 
-rtapi_result rtapi_task_set_period(void *task, rtapi_integer period_nsec)
+rtapi_result rtapi_task_set_period(rtapi_task_struct *task, rtapi_integer period_nsec)
 {
   return (rt_task_make_periodic((RT_TASK *) task, rt_get_time(),
 				nano2count((RTIME) period_nsec)) ==
@@ -298,7 +298,7 @@ rtapi_result rtapi_task_set_period(void *task, rtapi_integer period_nsec)
 }
 EXPORT_SYMBOL(rtapi_task_set_period);
 
-rtapi_result rtapi_task_init(void)
+rtapi_result rtapi_task_init(rtapi_task_struct *task)
 {
   return RTAPI_OK;
 }
@@ -386,7 +386,7 @@ void *rtapi_rtm_addr(void *rtm)
 }
 EXPORT_SYMBOL(rtapi_rtm_addr);
 
-rtapi_result rtapi_shm_delete(void *rtm)
+rtapi_result rtapi_rtm_delete(void *rtm)
 {
   return rtapi_shm_delete(rtm);
 }
@@ -451,7 +451,7 @@ rtapi_result rtapi_interrupt_disable(rtapi_id irq)
 }
 EXPORT_SYMBOL(rtapi_interrupt_disable);
 
-void *rtapi_mutex_new(rtapi_id key)
+rtapi_mutex_struct *rtapi_mutex_new(rtapi_id key)
 {
   SEM *semid;
 
@@ -463,7 +463,7 @@ void *rtapi_mutex_new(rtapi_id key)
 }
 EXPORT_SYMBOL(rtapi_mutex_new);
 
-rtapi_result rtapi_mutex_delete(void *sem)
+rtapi_result rtapi_mutex_delete(rtapi_mutex_struct *sem)
 {
   if (NULL == sem) return RTAPI_ERROR;
   kfree(sem);
@@ -471,7 +471,7 @@ rtapi_result rtapi_mutex_delete(void *sem)
 }
 EXPORT_SYMBOL(rtapi_mutex_delete);
 
-rtapi_result rtapi_mutex_give(void *sem)
+rtapi_result rtapi_mutex_give(rtapi_mutex_struct *sem)
 {
   rt_sem_signal(sem);
 
@@ -479,7 +479,7 @@ rtapi_result rtapi_mutex_give(void *sem)
 }
 EXPORT_SYMBOL(rtapi_mutex_give);
 
-rtapi_result rtapi_mutex_take(void *sem)
+rtapi_result rtapi_mutex_take(rtapi_mutex_struct *sem)
 {
   rt_sem_wait(sem);
 

@@ -253,12 +253,14 @@ AC_DEFUN([ACX_RTAI],
 	RTAI_LIBS=""
     else
 	RTAI_DIR=$rtai_dir
-	RTAI_LIBS="-L/usr/realtime/lib -llxrt"
+	RTAI_INCLUDE="-I$RTAI_DIR/include"
+	RTAI_LIBS="-L$RTAI_DIR/lib -llxrt"
 dnl put HAVE_RTAI in config.h
 	[AC_DEFINE(HAVE_RTAI,
 		1, [Define non-zero if you have RTAI.])]
 dnl put RTAI_DIR and linking flags in Makefile
 	[AC_SUBST(RTAI_DIR)]
+	[AC_SUBST(RTAI_INCLUDE)]
 	[AC_SUBST(RTAI_LIBS)]
 	[AC_MSG_RESULT([$RTAI_DIR])]
 dnl put RTAI_DIR into variable file for use by shell scripts

@@ -930,6 +930,8 @@ typedef struct {
   void * addr;
 } rtm_struct;
 
+#include <rtai_shm.h>		/* rtai_malloc,free() */
+
 void *ulapi_rtm_new(ulapi_id key, ulapi_integer size)
 {
   rtm_struct * shm;
@@ -937,7 +939,7 @@ void *ulapi_rtm_new(ulapi_id key, ulapi_integer size)
   shm = (rtm_struct *) malloc(sizeof(rtm_struct));
   if (NULL == (void *) shm) return NULL;
 
-  shm->addr = rt_shm_alloc(key, size, USE_GFP_KERNEL);
+  shm->addr = rtai_malloc(key, size);
   if (NULL == shm->addr) {
     free(shm);
     return NULL;
@@ -956,7 +958,7 @@ ulapi_result ulapi_rtm_delete(void * shm)
 {
   if (NULL != shm) {
     if (NULL != ((rtm_struct *) shm)->addr) {
-      rt_shm_free(((rtm_struct *) shm)->key);
+      rtai_free(((rtm_struct *) shm)->key, ((rtm_struct *) shm)->addr);
     }
     free(shm);
   }
@@ -968,7 +970,7 @@ ulapi_result ulapi_rtm_delete(void * shm)
 
 /*
   If we don't have RTAI, just use normal shm. The RT side that
-  simualates realtime will do the same.
+  simulates realtime will do the same.
 */
 
 void *ulapi_rtm_new(ulapi_id key, ulapi_integer size)

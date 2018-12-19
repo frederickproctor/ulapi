@@ -318,6 +318,7 @@ dnl put HAVE_IOPL in config.h
 	else
 	[AC_MSG_RESULT([no])]
 	fi
+	[AM_CONDITIONAL(HAVE_IOPL, test xhave_iopl = xyes	)]
 )
 
 AC_DEFUN([ACX_PRE_ULAPI],

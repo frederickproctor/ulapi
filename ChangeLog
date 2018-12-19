@@ -1,5 +1,5 @@
 1.8	16 July 2018
-	Resurrected RTAI
+	Resurrected RTAI, sort-of; moved inb and outb into here, from gomotion
 
 1.7	30 November 2017
 	Added ulapi_sxprintf and _strxcat for extending the strings for variable

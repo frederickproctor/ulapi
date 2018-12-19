@@ -6,6 +6,10 @@
   realtime behavior.
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>		/* vprintf() */
 #include <stddef.h>		/* NULL */
 #include <stdlib.h>		/* malloc(), sizeof(), atexit(), strtol() */
@@ -29,6 +33,10 @@
 #include <sys/ioctl.h>
 #include <netinet/in.h>		/* struct sockaddr_in */
 #include <netdb.h>		/* gethostbyname */
+#if HAVE_IOPL
+#include <sys/io.h>		/* iopl, inb, outb */
+#endif
+
 #include "rtapi.h"		/* these decls */
 #include "ulapi.h"		/* for the shared memory pass-through */
 

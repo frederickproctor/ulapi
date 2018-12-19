@@ -8,6 +8,8 @@
 
 #define rtapi_app_main init_module
 #define rtapi_app_exit cleanup_module
+#define rtapi_app_atexit(f) 
+
 extern int rtapi_app_init(void);
 extern int rtapi_app_wait(void);
 extern int rtapi_app_unwait(void);
@@ -154,6 +156,7 @@ module_param(name, int, 0)
   The main application should call this before any RTAPI functions.
  */
 extern int rtapi_app_init(int argc, char ** argv);
+#define rtapi_app_atexit(f) atexit(f)
 
 /*!
   The main application should call this when finished starting all

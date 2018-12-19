@@ -63,6 +63,8 @@ rtapi_result rtapi_system(const char *prog, rtapi_integer *result)
 
 static rtapi_integer _rtapi_wait_offset_nsec = 0;
 
+static int _do_io = 0;	  /* non-zero means we can access I/O ports */
+
 /*
   Returns abs val of end - start, as struct timeval
 */
@@ -335,17 +337,15 @@ void rtapi_print(const char *fmt, ...)
   va_end(args);
 }
 
-/*
-  no support for inb, outb
-*/
-
 void rtapi_outb(char byte, rtapi_id port)
 {
+  if (_do_io) outb(byte, port);
   return;
 }
 
 char rtapi_inb(rtapi_id port)
 {
+  if (_do_io) return inb(port);
   return 0;
 }
 
@@ -581,6 +581,14 @@ rtapi_result rtapi_app_init(int argc, char ** argv)
     what we just measured. With usec to nsec give 750 X.
   */
   _rtapi_wait_offset_nsec = diff.tv_usec * 750 / NUM;
+
+  /* turn on IO permissions */
+  _do_io = 0;
+#if HAVE_IOPL
+  if (0 == iopl(3)) {
+    _do_io = 1; 
+  }
+#endif
 
   return RTAPI_OK;
 }

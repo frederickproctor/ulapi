@@ -17,7 +17,7 @@ int main(int argc, char * argv[])
   int port;
 
   if (argc < 2 ||
-      1 != sscanf(argv[2], "%i", &port)) {
+      1 != sscanf(argv[1], "%i", &port)) {
     fprintf(stderr, "usage: inb <port>\n");
     return 1;
   }
@@ -27,7 +27,8 @@ int main(int argc, char * argv[])
     return 1;
   }
   
-  printf("%d\n", (int) rtapi_inb(port));
+  val = rtapi_inb(port);
+  printf("%d\n", val);
 
   return 0;
 }

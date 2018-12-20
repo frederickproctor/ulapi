@@ -1,3 +1,5 @@
+AM_CPPFLAGS = -I../src
+
 bin_PROGRAMS = ultest semtest inifind sockettest serialtest broadcasttest multicasttest inb outb
 
 ultest_SOURCES = ../src/ultest.c

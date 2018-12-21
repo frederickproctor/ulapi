@@ -20,8 +20,10 @@ bin/Makefile.in
 bin/broadcasttest
 bin/dlfuncs.so
 bin/dltest
+bin/inb
 bin/inifind
 bin/multicasttest
+bin/outb
 bin/semtest
 bin/serial
 bin/serialtest

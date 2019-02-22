@@ -10,6 +10,8 @@
 #include <string.h>		/* strncpy, strlen */
 #include "ulapi.h"
 
+enum {BUFFERLEN = 4096};
+
 typedef struct {
   void *client_read_task;
   ulapi_integer socket_id;
@@ -25,7 +27,6 @@ void client_read_code(void *args)
   void *client_read_task;
   ulapi_integer socket_id;
   ulapi_integer nchars;
-  enum {BUFFERLEN = 80};
   char inbuf[BUFFERLEN];
 
   client_read_task = ((client_read_args *) args)->client_read_task;
@@ -60,7 +61,6 @@ void server_code(void *args)
   void *server_task;
   ulapi_integer client_id;
   ulapi_integer nchars;
-  enum {BUFFERLEN = 80};
   char inbuf[BUFFERLEN];
 
   server_task = ((server_args *) args)->server_task;
@@ -90,7 +90,6 @@ void server_code(void *args)
 
 int main(int argc, char *argv[])
 {
-  enum {BUFFERLEN = 80};
   int option;
   int is_client;
   int is_broadcastee;

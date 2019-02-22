@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -I../src
 
-bin_PROGRAMS = ultest semtest inifind sockettest serialtest broadcasttest multicasttest inb outb
+bin_PROGRAMS = ultest semtest mutextest inifind sockettest serialtest broadcasttest multicasttest inb outb
 
 ultest_SOURCES = ../src/ultest.c
 ultest_LDADD = -L../lib -lulapi @PTHREAD_LIBS@ @RTAI_LIBS@
@@ -9,6 +9,10 @@ ultest_DEPENDENCIES = ../lib/libulapi.a
 semtest_SOURCES = ../src/semtest.c
 semtest_LDADD = -L../lib -lulapi @PTHREAD_LIBS@ @RTAI_LIBS@
 semtest_DEPENDENCIES = ../lib/libulapi.a
+
+mutextest_SOURCES = ../src/mutextest.c
+mutextest_LDADD = -L../lib -lulapi @PTHREAD_LIBS@ @RTAI_LIBS@
+mutextest_DEPENDENCIES = ../lib/libulapi.a
 
 serialtest_SOURCES = ../src/serialtest.c
 serialtest_LDADD = -L../lib -lulapi @PTHREAD_LIBS@ @RTAI_LIBS@

@@ -23,6 +23,7 @@ bin/dltest
 bin/inb
 bin/inifind
 bin/multicasttest
+bin/mutextest
 bin/outb
 bin/semtest
 bin/serial

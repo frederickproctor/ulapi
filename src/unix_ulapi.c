@@ -700,6 +700,7 @@ ulapi_result ulapi_mutex_delete(ulapi_mutex_struct *mutex)
 
   (void) pthread_mutex_destroy((pthread_mutex_t *) mutex);
   free(mutex);
+  mutex = NULL;
 
   return ULAPI_OK;
 }

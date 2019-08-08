@@ -31,12 +31,19 @@ extern "C" {
 #endif
 
 /* C99 supports multi-byte characters, implementation-defined */
+#ifndef WIN32
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmultichar"
+#endif
 #if 'AB' == 0x4142
 #define IS_BIG_ENDIAN 0
 #define IS_LITTLE_ENDIAN 1
 #else
 #define IS_BIG_ENDIAN 1
 #define IS_LITTLE_ENDIAN 0
+#endif
+#ifndef WIN32
+#pragma GCC diagnostic pop
 #endif
 
 /* make sure we have enough string space to print numbers as strings */

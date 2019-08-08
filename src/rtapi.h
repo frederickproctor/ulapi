@@ -38,15 +38,10 @@ extern "C" {
 #endif
 
 /* C99 supports multi-byte characters, implementation-defined */
-<<<<<<< HEAD
 #ifndef WIN32
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmultichar"
 #endif
-=======
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmultichar"
->>>>>>> af6a90cec242933a1e09349994a2741456e114a7
 #if 'AB' == 0x4142
 #define IS_BIG_ENDIAN 0
 #define IS_LITTLE_ENDIAN 1
@@ -54,13 +49,9 @@ extern "C" {
 #define IS_BIG_ENDIAN 1
 #define IS_LITTLE_ENDIAN 0
 #endif
-<<<<<<< HEAD
 #ifndef WIN32
 #pragma GCC diagnostic pop
 #endif
-=======
-#pragma GCC diagnostic pop
->>>>>>> af6a90cec242933a1e09349994a2741456e114a7
 
 /* make sure we have enough string space to print numbers as strings */
 #ifndef DIGITS_IN

@@ -9,6 +9,9 @@ libulapi_a_CFLAGS =
 if HAVE_RTAI
 libulapi_a_CFLAGS += @RTAI_INCLUDE@
 endif
+if HAVE_XENOMAI
+libulapi_a_CFLAGS += @XENOMAI_CFLAGS@
+endif
 if HAVE_IOPL
 libulapi_a_CFLAGS += -O2
 endif
@@ -21,6 +24,9 @@ libdlulapi_a_SOURCES = $(SOURCES)
 libdlulapi_a_CFLAGS = @DL_CFLAGS@
 if HAVE_RTAI
 libulapi_a_CFLAGS += @RTAI_INCLUDE@
+endif
+if HAVE_XENOMAI
+libulapi_a_CFLAGS += @XENOMAI_CFLAGS@
 endif
 if HAVE_IOPL
 libdlulapi_a_CFLAGS += -O2

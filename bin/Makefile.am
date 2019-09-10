@@ -53,22 +53,4 @@ outb_CFLAGS += -O2
 outb_LDADD = -L../lib -lunixrtapi -lunixulapi @PTHREAD_LIBS@
 outb_DEPENDENCIES = ../lib/libunixrtapi.a
 
-if NO_DL
-else
-
-bin_PROGRAMS += dltest dlfuncs.so
-
-dltest_SOURCES = ../src/dltest.c
-dltest_CFLAGS = -DTARGET_UNIX
-dltest_LDADD = -L../lib -ldlulapi @PTHREAD_LIBS@ @RTAI_LIBS@
-dltest_DEPENDENCIES = ../lib/libdlulapi.a
-
-dlfuncs_so_SOURCES = ../src/dlfuncs.c
-dlfuncs_so_CFLAGS = -DTARGET_UNIX
-dlfuncs_so_CFLAGS += @DL_CFLAGS@
-dlfuncs_so_LDADD = @DL_CFLAGS@ -L../lib -ldlulapi @RTAI_LIBS@
-dlfuncs_so_DEPENDENCIES = ../lib/libdlulapi.a
-
-endif
-
 EXTRA_DIST = CMakeLists.txt Makefile.am

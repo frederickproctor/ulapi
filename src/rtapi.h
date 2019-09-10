@@ -139,29 +139,41 @@ extern rtapi_result rtapi_clock_get_interval(rtapi_integer start_secs,
 */
 extern void rtapi_exit(void);
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #ifdef WIN32
 
 #include "ulapi.h"	/* ulapi_task_struct */
 typedef ulapi_task_struct rtapi_task_struct;
 typedef ulapi_mutex_struct rtapi_mutex_struct;
 
-#else
+#endif
 
-#ifdef __IN_RTAI__
+#ifdef TARGET_RTAI
 
 #include <rtai_sched.h>		/* RT_TASK */
 #include <rtai_sem.h>		/* SEM */
 typedef RT_TASK rtapi_task_struct;
 typedef SEM rtapi_mutex_struct;
 
-#else
+#endif
 
-#include <pthread.h>		/* pthread_t */
+#ifdef TARGET_XENOMAI
 
-typedef pthread_t rtapi_task_struct;
-typedef pthread_mutex_t rtapi_mutex_struct;
+#include <alchemy/task.h>
+#include <alchemy/sem.h>
+typedef RT_TASK rtapi_task_struct;
+typedef RT_SEM rtapi_mutex_struct;
 
 #endif
+
+#ifdef TARGET_UNIX
+
+#include <pthread.h>		/* pthread_t */
+typedef pthread_t rtapi_task_struct;
+typedef pthread_mutex_t rtapi_mutex_struct;
 
 #endif
 

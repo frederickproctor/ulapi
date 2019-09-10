@@ -285,8 +285,8 @@ AC_DEFUN([ACX_XENOMAI],
 	XENOMAI_LDFLAGS=""
     else
 	XENOMAI_DIR=$xenomai_dir
-	XENOMAI_CFLAGS="`xeno-config --skin=alchemy -cflags`"
-	XENOMAI_LDFLAGS="`xeno-config --skin=alchemy -ldflags`"
+	XENOMAI_CFLAGS="`xeno-config --skin=alchemy --cflags`"
+	XENOMAI_LDFLAGS="`xeno-config --skin=alchemy --ldflags`"
 dnl put HAVE_XENOMAI in config.h
 	[AC_DEFINE(HAVE_XENOMAI,
 		1, [Define non-zero if you have XENOMAI.])]

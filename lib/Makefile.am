@@ -1,36 +1,29 @@
 AM_CPPFLAGS = -I../src
 
-lib_LIBRARIES = libulapi.a
-
 SOURCES = ../src/unix_ulapi.c ../src/ulapi.h ../src/inifile.c ../src/inifile.h ../src/unix_rtapi.c ../src/rtapi.h
 
-libulapi_a_SOURCES = $(SOURCES)
-libulapi_a_CFLAGS = 
-if HAVE_RTAI
-libulapi_a_CFLAGS += @RTAI_INCLUDE@
-endif
-if HAVE_XENOMAI
-libulapi_a_CFLAGS += @XENOMAI_CFLAGS@
-endif
+# build Unix ulapi and rtapi no matter what else is installed
+
+lib_LIBRARIES = libunixulapi.a libunixrtapi.a
+
+libunixulapi_a_SOURCES = ../src/unix_ulapi.c ../src/ulapi.h ../src/inifile.c ../src/inifile.h
+libunixulapi_a_CFLAGS = -DTARGET_UNIX
+
+libunixrtapi_a_SOURCES = ../src/unix_rtapi.c ../src/rtapi.h
+libunixrtapi_a_CFLAGS = -DTARGET_UNIX
+
 if HAVE_IOPL
-libulapi_a_CFLAGS += -O2
+libunixulapi_a_CFLAGS += -O2
 endif
 
-if NO_DL
-else
+# build Xenomai ulapi and rtapi if it's installed
 
-lib_LIBRARIES += libdlulapi.a
-libdlulapi_a_SOURCES = $(SOURCES)
-libdlulapi_a_CFLAGS = @DL_CFLAGS@
-if HAVE_RTAI
-libulapi_a_CFLAGS += @RTAI_INCLUDE@
-endif
 if HAVE_XENOMAI
-libulapi_a_CFLAGS += @XENOMAI_CFLAGS@
-endif
-if HAVE_IOPL
-libdlulapi_a_CFLAGS += -O2
-endif
+
+lib_LIBRARIES += libxenortapi.a
+
+libxenortapi_a_SOURCES = ../src/xeno_rtapi.c ../src/rtapi.h
+libxenortapi_a_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@
 
 endif
 

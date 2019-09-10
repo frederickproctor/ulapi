@@ -1,3 +1,7 @@
+2.0	10 September 2019
+	Added support for Xenomai, and refactored the Makefiles to better
+	separate Unix native from Unix-to-realtime versions
+	
 1.8	16 July 2018
 	Resurrected RTAI, sort-of; moved inb and outb into here, from
 	gomotion; added rtapi_app_atexit decl; added mutextest

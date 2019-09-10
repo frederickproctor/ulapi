@@ -1,4 +1,4 @@
-AC_INIT([ulapi], [1.8])
+AC_INIT([ulapi], [2.0])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_SRCDIR([src/ulapi.h])
 AC_CONFIG_HEADERS([config/config.h])

@@ -38,7 +38,7 @@ static void task_code(void *arg)
     rtapi_clock_get_interval(start_secs, start_nsecs,
 			     now_secs, now_nsecs,
 			     &diff_secs, &diff_nsecs);
-    if (diff_secs > 10) break;
+    if (diff_secs >= 10) break;
     rtapi_wait(period_nsec);
   }
 

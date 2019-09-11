@@ -16,6 +16,7 @@
 #include <alchemy/task.h>
 #include <alchemy/timer.h>
 #include <alchemy/heap.h>
+#include <alchemy/sem.h>
 #include <sys/io.h>
 
 #include "config.h"
@@ -261,7 +262,7 @@ typedef struct {
   rtapi_integer size;
   rtapi_id id;
   void * addr;
-} shm_struct;
+} shm_struct;			/* also used for rtm */
 
 void * rtapi_shm_new(rtapi_id key, rtapi_integer size)
 {
@@ -309,17 +310,46 @@ rtapi_result rtapi_shm_delete(void * shm)
 
 void * rtapi_rtm_new(rtapi_id key, rtapi_integer size)
 {
-  return rtapi_shm_new(key, size);
+  shm_struct *rtm;
+
+  /* here we use the 'rtapi_new' function instead of malloc, since
+     the caller is a realtime process */
+  rtm = rtapi_new(sizeof(shm_struct));
+  if (NULL == (void *) rtm) return NULL;
+
+  rtm->id = shmget((key_t) key, (int) size, IPC_CREAT | 0666);
+  if (-1 == rtm->id) {
+    rtapi_free(rtm);	       /* likewise, 'rtapi_free' vs. 'free' */
+    return NULL;
+  }
+
+  rtm->addr = shmat(rtm->id, NULL, 0);
+  if ((void *) -1 == rtm->addr) {
+    rtapi_free(rtm);
+    return NULL;
+  }
+
+  return (void *) rtm;
 }
 
 void * rtapi_rtm_addr(void * rtm)
 {
-  return rtapi_shm_addr(rtm);
+  return ((shm_struct *) rtm)->addr;
 }
 
 rtapi_result rtapi_rtm_delete(void * rtm)
 {
-  return rtapi_shm_delete(rtm);
+  struct shmid_ds d;
+  int r1, r2;
+
+  if (NULL == rtm) return RTAPI_OK;
+
+  r1 = shmdt(((shm_struct *) rtm)->addr);
+  r2 = shmctl(IPC_RMID, ((shm_struct *) rtm)->id, &d);
+
+  rtapi_free(rtm);
+
+  return (r1 || r2 ? RTAPI_ERROR : RTAPI_OK);
 }
 
 void rtapi_print(const char *fmt, ...)
@@ -362,44 +392,85 @@ rtapi_result rtapi_interrupt_disable(rtapi_id irq)
   return RTAPI_OK;
 }
 
+/*
+  mutex keys are ignored in Xenomai; an optional string can be
+  provided but it's not set in this API
+*/
+
+rtapi_result rtapi_mutex_init(rtapi_mutex_struct *mutex, rtapi_id key)
+{
+  return RTAPI_OK;
+}
+
 rtapi_mutex_struct *rtapi_mutex_new(rtapi_id key)
 {
-  return NULL;
+  rtapi_mutex_struct *mutex;
+
+  mutex = rtapi_new(sizeof(rtapi_mutex_struct));
+  if (NULL == (void *) mutex) return NULL;
+
+  if (0 != rt_mutex_create(mutex, NULL)) {
+    rtapi_free(mutex);
+    return NULL;
+  }
+
+  return mutex;
 }
 
-rtapi_result rtapi_mutex_delete(rtapi_mutex_struct *sem)
+rtapi_result rtapi_mutex_delete(rtapi_mutex_struct *mutex)
 {
+  rtapi_mutex_delete(mutex);
+  rtapi_free(mutex);
+
   return RTAPI_OK;
 }
 
-rtapi_result rtapi_mutex_give(rtapi_mutex_struct *sem)
+rtapi_result rtapi_mutex_give(rtapi_mutex_struct *mutex)
 {
-  return RTAPI_OK;
+  return (0 == rt_mutex_release(mutex)) ? (RTAPI_OK) : (RTAPI_ERROR);
 }
 
-rtapi_result rtapi_mutex_take(rtapi_mutex_struct *sem)
+rtapi_result rtapi_mutex_take(rtapi_mutex_struct *mutex)
 {
-  return RTAPI_OK;
+  return (0 == rt_mutex_acquire(mutex, TM_INFINITE)) ? (RTAPI_OK) : (RTAPI_ERROR);
 }
+
+/*
+  There should be an 'rtapi_sem_struct' but this hasn't been done yet
+  since it breaks the API
+*/
 
 void *rtapi_sem_new(rtapi_id key)
 {
-  return rtapi_mutex_new(key);
+  RT_SEM *sem;
+
+  sem = rtapi_new(sizeof(RT_SEM));
+  if (NULL == (void *) sem) return NULL;
+
+  if (0 != rt_sem_create(sem, NULL, 0, 0)) {
+    rtapi_free(sem);
+    return NULL;
+  }
+
+  return (void *) sem;
 }
 
 rtapi_result rtapi_sem_delete(void *sem)
 {
-  return rtapi_mutex_delete(sem);
+  rtapi_sem_delete(sem);
+  rtapi_free(sem);
+
+  return RTAPI_OK;
 }
 
 rtapi_result rtapi_sem_give(void *sem)
 {
-  return rtapi_mutex_give(sem);
+  return (0 == rt_sem_v(sem)) ? (RTAPI_OK) : (RTAPI_ERROR);
 }
 
 rtapi_result rtapi_sem_take(void *sem)
 {
-  return rtapi_mutex_take(sem);
+  return (0 == rt_sem_p(sem, TM_INFINITE)) ? (RTAPI_OK) : (RTAPI_ERROR);
 }
 
 rtapi_result
@@ -526,7 +597,7 @@ rtapi_string_copyone(char *dst, const char *src)
   return dst;
 }
 
-/* we don't have RTAI sockets, so these will all return 'unimplemented' */
+/* we don't have Xenomai sockets, so these will all return 'unimplemented' */
 
 rtapi_integer
 rtapi_socket_client(rtapi_integer port, const char *host)
@@ -577,8 +648,7 @@ rtapi_socket_close(rtapi_integer id)
 }
 
 /*
-  At the moment, we don't have RTAI serial ports, so these all return
-  errors. There is an RT serial comm interface we should use one day.
+  Wwe don't have Xenomai serial ports, so these all return errors.
 */
 
 static int rtapi_serial_id = -1; /* dummy id */

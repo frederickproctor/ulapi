@@ -163,9 +163,10 @@ typedef SEM rtapi_mutex_struct;
 #ifdef TARGET_XENOMAI
 
 #include <alchemy/task.h>
+#include <alchemy/mutex.h>
 #include <alchemy/sem.h>
 typedef RT_TASK rtapi_task_struct;
-typedef RT_SEM rtapi_mutex_struct;
+typedef RT_MUTEX rtapi_mutex_struct;
 
 #endif
 

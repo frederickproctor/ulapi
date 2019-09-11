@@ -64,3 +64,4 @@ rtlib/*.c
 rtlib/*.h
 rtlib/*.ko
 rtlib/*.o
+xenomaidir

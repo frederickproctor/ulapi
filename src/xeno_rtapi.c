@@ -254,7 +254,11 @@ rtapi_result rtapi_task_exit(void)
 /*
   The rtapi_shm_ functions are for user-space processes to connect to
   RT shared memory. The rtapi_rtm_ functions are for RT processes to
-  connect to user-space processes. In Xenomai, they are the same.
+  connect to user-space processes. In Xenomai, they are the same. This
+  means that you can build either a regular Unix application or a
+  Xenomai user-space application, and they will both work. The
+  advantage of building a regular Unix application is that it doesn't
+  need root privileges to run.
 */
 
 typedef struct {

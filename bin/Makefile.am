@@ -62,8 +62,8 @@ rt_timer_test_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@
 rt_timer_test_LDADD = -L../lib -lxenortapi @XENOMAI_LDFLAGS@ -lm
 
 ul_timer_test_SOURCES = ../src/ul_timer_test.c
-ul_timer_test_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@
-ul_timer_test_LDADD = -L../lib -lxenortapi @XENOMAI_LDFLAGS@ -lm
+ul_timer_test_CFLAGS = -DTARGET_UNIX
+ul_timer_test_LDADD = -L../lib -lunixrtapi -lunixulapi @PTHREAD_LIBS@
 
 endif
 

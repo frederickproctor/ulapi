@@ -4,16 +4,18 @@
   Implementations of RT API functions declared in rtapi.h, for Xenomai.
 */
 
-#include <stdio.h>
-#include <signal.h>
-#include <unistd.h>
-#include <stdarg.h>
+#include <stddef.h>		/* NULL, sizeof */
+#include <stdio.h>		/* vprintf */
+#include <stdarg.h>		/* va_start */
+#include <stdlib.h>		/* strtoul */
+#include <unistd.h>		/* pause */
 #include <ctype.h>
+#include <sys/ipc.h>		/* IPC_* */
+#include <sys/shm.h>		/* shmget() */
 #include <sys/mman.h>
 #include <alchemy/task.h>
 #include <alchemy/timer.h>
 #include <alchemy/heap.h>
-#include <math.h>
 #include <sys/io.h>
 
 #include "config.h"
@@ -154,17 +156,15 @@ rtapi_task_struct *rtapi_task_new(void)
 
 rtapi_result rtapi_task_delete(rtapi_task_struct *task)
 {
-  int retval;
-  
   if (0 == task) {
     return RTAPI_ERROR;
   }
 
   rt_task_delete(task);
 
-  retval = rt_heap_free(&the_heap, task);
+  rtapi_free(task);
   
-  return retval ? RTAPI_ERROR : RTAPI_OK;
+  return RTAPI_OK;
 }
 
 rtapi_integer rtapi_task_stack_check(rtapi_task_struct *task)
@@ -250,34 +250,76 @@ rtapi_result rtapi_task_exit(void)
   return RTAPI_OK;		/* nothing need be done */
 }
 
-void *rtapi_shm_new(rtapi_id key, rtapi_integer size)
+/*
+  The rtapi_shm_ functions are for user-space processes to connect to
+  RT shared memory. The rtapi_rtm_ functions are for RT processes to
+  connect to user-space processes. In Xenomai, they are the same.
+*/
+
+typedef struct {
+  rtapi_id key;
+  rtapi_integer size;
+  rtapi_id id;
+  void * addr;
+} shm_struct;
+
+void * rtapi_shm_new(rtapi_id key, rtapi_integer size)
 {
-  return NULL;
+  shm_struct *shm;
+
+  /* here we use the Unix 'malloc' function instead of rtapi_new, since
+     the caller is a user-level process */
+  shm = malloc(sizeof(shm_struct));
+  if (NULL == (void *) shm) return NULL;
+
+  shm->id = shmget((key_t) key, (int) size, IPC_CREAT | 0666);
+  if (-1 == shm->id) {
+    free(shm);			/* likewise, 'free' vs. 'rtapi_free' */
+    return NULL;
+  }
+
+  shm->addr = shmat(shm->id, NULL, 0);
+  if ((void *) -1 == shm->addr) {
+    free(shm);
+    return NULL;
+  }
+
+  return (void *) shm;
 }
 
-void *rtapi_shm_addr(void *shm)
+void * rtapi_shm_addr(void * shm)
 {
-  return NULL;
+  return ((shm_struct *) shm)->addr;
 }
 
-rtapi_result rtapi_shm_delete(void *shm)
+rtapi_result rtapi_shm_delete(void * shm)
 {
-  return RTAPI_OK;
+  struct shmid_ds d;
+  int r1, r2;
+
+  if (NULL == shm) return RTAPI_OK;
+
+  r1 = shmdt(((shm_struct *) shm)->addr);
+  r2 = shmctl(IPC_RMID, ((shm_struct *) shm)->id, &d);
+
+  free(shm);
+
+  return (r1 || r2 ? RTAPI_ERROR : RTAPI_OK);
 }
 
-void *rtapi_rtm_new(rtapi_id key, rtapi_integer size)
+void * rtapi_rtm_new(rtapi_id key, rtapi_integer size)
 {
-  return NULL;
+  return rtapi_shm_new(key, size);
 }
 
-void *rtapi_rtm_addr(void *rtm)
+void * rtapi_rtm_addr(void * rtm)
 {
-  return NULL;
+  return rtapi_shm_addr(rtm);
 }
 
-rtapi_result rtapi_rtm_delete(void *rtm)
+rtapi_result rtapi_rtm_delete(void * rtm)
 {
-  return RTAPI_OK;
+  return rtapi_shm_delete(rtm);
 }
 
 void rtapi_print(const char *fmt, ...)
@@ -387,7 +429,7 @@ rtapi_app_wait(void)
 void
 rtapi_exit(void)
 {
-  return;
+  rt_heap_delete(&the_heap);
 }
 
 void *

@@ -25,11 +25,13 @@ bin/inifind
 bin/multicasttest
 bin/mutextest
 bin/outb
+bin/rt_timer_test
 bin/semtest
 bin/serial
 bin/serialtest
 bin/sockettest
 bin/ultest
+bin/ul_timer_test
 config.log
 config.status
 config/compile

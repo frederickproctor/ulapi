@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -I../src
 
-bin_PROGRAMS = ultest semtest mutextest inifind sockettest serialtest broadcasttest multicasttest inb outb
+bin_PROGRAMS = ultest semtest mutextest inifind sockettest serialtest broadcasttest multicasttest inb outb ul_timer_test
 
 ultest_SOURCES = ../src/ultest.c
 ultest_CFLAGS = -DTARGET_UNIX
@@ -55,10 +55,15 @@ outb_DEPENDENCIES = ../lib/libunixrtapi.a
 
 if HAVE_XENOMAI
 
-bin_PROGRAMS += rt_timer_test
+bin_PROGRAMS += rt_timer_test ul_timer_test
+
 rt_timer_test_SOURCES = ../src/rt_timer_test.c
 rt_timer_test_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@
 rt_timer_test_LDADD = -L../lib -lxenortapi @XENOMAI_LDFLAGS@ -lm
+
+ul_timer_test_SOURCES = ../src/ul_timer_test.c
+ul_timer_test_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@
+ul_timer_test_LDADD = -L../lib -lxenortapi @XENOMAI_LDFLAGS@ -lm
 
 endif
 

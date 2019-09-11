@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -I../src
 
-bin_PROGRAMS = ultest semtest mutextest inifind sockettest serialtest broadcasttest multicasttest inb outb ul_timer_test
+bin_PROGRAMS = ultest semtest mutextest inifind sockettest serialtest broadcasttest multicasttest inb outb
 
 ultest_SOURCES = ../src/ultest.c
 ultest_CFLAGS = -DTARGET_UNIX

@@ -1,7 +1,5 @@
 AM_CPPFLAGS = -I../src
 
-SOURCES = ../src/unix_ulapi.c ../src/ulapi.h ../src/inifile.c ../src/inifile.h ../src/unix_rtapi.c ../src/rtapi.h
-
 # build Unix ulapi and rtapi no matter what else is installed
 
 lib_LIBRARIES = libunixulapi.a libunixrtapi.a
@@ -14,16 +12,25 @@ libunixrtapi_a_CFLAGS = -DTARGET_UNIX
 
 if HAVE_IOPL
 libunixulapi_a_CFLAGS += -O2
+libunixrtapi_a_CFLAGS += -O2
 endif
 
 # build Xenomai ulapi and rtapi if it's installed
 
 if HAVE_XENOMAI
 
-lib_LIBRARIES += libxenortapi.a
+lib_LIBRARIES += libxenoulapi.a libxenortapi.a
+
+libxenoulapi_a_SOURCES = ../src/xeno_ulapi.c ../src/ulapi.h
+libxenoulapi_a_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@
 
 libxenortapi_a_SOURCES = ../src/xeno_rtapi.c ../src/rtapi.h
 libxenortapi_a_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@
+
+if HAVE_IOPL
+libxenoulapi_a_CFLAGS += -O2
+libxenortapi_a_CFLAGS += -O2
+endif
 
 endif
 

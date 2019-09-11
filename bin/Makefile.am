@@ -53,4 +53,13 @@ outb_CFLAGS += -O2
 outb_LDADD = -L../lib -lunixrtapi -lunixulapi @PTHREAD_LIBS@
 outb_DEPENDENCIES = ../lib/libunixrtapi.a
 
+if HAVE_XENOMAI
+
+bin_PROGRAMS += rt_timer_test
+rt_timer_test_SOURCES = ../src/rt_timer_test.c
+rt_timer_test_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@
+rt_timer_test_LDADD = -L../lib -lxenortapi @XENOMAI_LDFLAGS@ -lm
+
+endif
+
 EXTRA_DIST = CMakeLists.txt Makefile.am

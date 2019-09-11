@@ -16,6 +16,7 @@
 #include <math.h>
 #include <sys/io.h>
 
+#include "config.h"
 #include "rtapi.h"
 
 #define THE_HEAP_SIZE 1048576 	/* 1 MB */
@@ -48,15 +49,20 @@ rtapi_result rtapi_system(const char *prog, rtapi_integer *result)
   return RTAPI_ERROR;
 }
 
+enum {
+  XENOMAI_PRIO_LOWEST = 0,
+  XENOMAI_PRIO_HIGHEST = 99
+};
+
 rtapi_prio rtapi_prio_highest(void)
 {
-  return 99;
+  return XENOMAI_PRIO_HIGHEST;
 }
 
 
 rtapi_prio rtapi_prio_lowest(void)
 {
-  return 0;
+  return XENOMAI_PRIO_LOWEST;
 }
 
 rtapi_prio rtapi_prio_next_higher(rtapi_prio prio)
@@ -139,7 +145,11 @@ rtapi_result rtapi_clock_get_interval(rtapi_integer start_secs,
 
 rtapi_task_struct *rtapi_task_new(void)
 {
-  return (rtapi_task_struct *) rtapi_new(sizeof(rtapi_task_struct));
+  RT_TASK *task;
+  
+  task = rtapi_new(sizeof(RT_TASK));
+
+  return task;
 }
 
 rtapi_result rtapi_task_delete(rtapi_task_struct *task)
@@ -150,14 +160,16 @@ rtapi_result rtapi_task_delete(rtapi_task_struct *task)
     return RTAPI_ERROR;
   }
 
-  retval = rtapi_heap_free(&the_heap, task);
+  rt_task_delete(task);
+
+  retval = rt_heap_free(&the_heap, task);
   
   return retval ? RTAPI_ERROR : RTAPI_OK;
 }
 
 rtapi_integer rtapi_task_stack_check(rtapi_task_struct *task)
 {
-  return 0;
+  return -1;
 }
 
 rtapi_result rtapi_task_start(rtapi_task_struct *task,
@@ -165,24 +177,47 @@ rtapi_result rtapi_task_start(rtapi_task_struct *task,
 			      void *taskarg,
 			      rtapi_prio prio,
 			      rtapi_integer stacksize,
-			      rtapi_integer period_nsec, rtapi_flag uses_fp)
+			      rtapi_integer period_nsec,
+			      rtapi_flag uses_fp)
 {
+  int retval;
+  
+  retval = rt_task_create(
+    task,
+    NULL,			/* optional name string */
+    stacksize,
+    prio,
+    0);			      /* mode, could be T_joinable | T_LOCK */
+  if (0 != retval) return RTAPI_ERROR;
+
+  retval = rt_task_set_periodic(task, TM_NOW, rt_timer_ns2ticks(period_nsec));
+  if (0 != retval) {
+    rt_task_delete(task);
+    return RTAPI_ERROR;
+  }
+
+  retval = rt_task_start(task, taskcode, taskarg);
+  if (0 != retval) {
+    rt_task_delete(task);
+    return RTAPI_ERROR;
+  }
+
   return RTAPI_OK;
 }
 
 rtapi_result rtapi_task_stop(rtapi_task_struct *task)
 {
-  return RTAPI_OK;
+  return (rt_task_delete(task) == 0) ? (RTAPI_OK) : (RTAPI_ERROR);
 }
 
 rtapi_result rtapi_task_pause(rtapi_task_struct *task)
 {
-  return RTAPI_OK;
+  return (rt_task_suspend(task) == 0) ? (RTAPI_OK) : (RTAPI_ERROR);
 }
 
 rtapi_result rtapi_task_resume(rtapi_task_struct *task)
 {
-  return RTAPI_OK;
+  return (rt_task_resume(task) == 0) ? (RTAPI_OK) : (RTAPI_ERROR);
 }
 
 rtapi_result rtapi_task_set_period(rtapi_task_struct *task, rtapi_integer period_nsec)
@@ -194,22 +229,25 @@ rtapi_result rtapi_task_set_period(rtapi_task_struct *task, rtapi_integer period
 
 rtapi_result rtapi_task_init(rtapi_task_struct *task)
 {
-  return RTAPI_OK;
+  return RTAPI_OK;		/* nothing needs to be done */
 }
 
 rtapi_result rtapi_self_set_period(rtapi_integer period_nsec)
 {
-  return RTAPI_OK;
+  return (rt_task_set_periodic(NULL, TM_NOW, rt_timer_ns2ticks(period_nsec)) == 0) ? (RTAPI_OK) : (RTAPI_ERROR);
 }
 
 rtapi_result rtapi_wait(rtapi_integer period_nsec)
 {
+  /* the period is already set in the task, so ignore it here */
   rt_task_wait_period(NULL);
+
+  return RTAPI_OK;
 }
 
 rtapi_result rtapi_task_exit(void)
 {
-  return RTAPI_OK;
+  return RTAPI_OK;		/* nothing need be done */
 }
 
 void *rtapi_shm_new(rtapi_id key, rtapi_integer size)
@@ -247,7 +285,7 @@ void rtapi_print(const char *fmt, ...)
   va_list args;
 
   va_start(args, fmt);
-  printf(fmt, args);
+  vprintf(fmt, args);
   va_end(args);
 }
 
@@ -328,17 +366,21 @@ rtapi_app_init(void)
   int retval;
 
   retval = rt_heap_create(&the_heap, NULL, rtapi_heap_size, 0);
-  
-  return RTAPI_OK;
+
+#if HAVE_IOPL
+  iopl(3);
+#endif
+
+  mlockall(MCL_CURRENT | MCL_FUTURE);  
+
+  return retval ? RTAPI_ERROR : RTAPI_OK;
 }
 
-/*
-  We need not do anything to keep tasks alive waiting for termination.
-  Insmod will return and the tasks will stay alive until an rmmod.
-*/
 rtapi_result
 rtapi_app_wait(void)
 {
+  pause();
+
   return RTAPI_OK;
 }
 
@@ -356,6 +398,8 @@ rtapi_new(rtapi_integer size)
 
   retval = rt_heap_alloc(&the_heap, size, TM_INFINITE, &ptr);
 
+  if (0 != retval) return NULL;
+
   return ptr;
 }
 
@@ -364,10 +408,6 @@ rtapi_free(void *ptr)
 {
   rt_heap_free(&the_heap, ptr);
 }
-
-/*
-  insmod will have already set these variables, so just leave them alone
-*/
 
 char *
 rtapi_arg_get_string(char ** var, char *key)

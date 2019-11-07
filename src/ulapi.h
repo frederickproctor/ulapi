@@ -272,6 +272,12 @@ extern ulapi_result ulapi_sem_delete(void *sem);
 extern ulapi_result ulapi_sem_give(void *sem);
 extern ulapi_result ulapi_sem_take(void *sem);
 
+// placeholder for providing non-void interface to semaphores
+extern void *ulapi_semaphore_new(ulapi_id key);
+extern ulapi_result ulapi_semaphore_delete(void *sem);
+extern ulapi_result ulapi_semaphore_give(void *sem);
+extern ulapi_result ulapi_semaphore_take(void *sem);
+
 /*!
   Returns a pointer to an implementation-defined structure that is
   passed to the other condition variable functions, or NULL if no

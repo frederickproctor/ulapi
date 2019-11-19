@@ -832,6 +832,26 @@ ulapi_result ulapi_sem_take(void * sem)
   return semtake(*((int *) sem)) == 0 ? ULAPI_OK : ULAPI_ERROR;
 }
 
+ulapi_semaphore_struct *ulapi_semaphore_new(ulapi_id key)
+{
+  return ulapi_sem_new(key);
+}
+
+ulapi_result ulapi_semaphore_delete(ulapi_semaphore_struct *sem)
+{
+  return ulapi_sem_delete(sem);
+}
+
+ulapi_result ulapi_semaphore_give(ulapi_semaphore_struct *sem)
+{
+  return ULAPI_OK;
+}
+
+ulapi_result ulapi_semaphore_take(ulapi_semaphore_struct *sem)
+{
+  return ULAPI_OK;
+}
+
 void * ulapi_cond_new(ulapi_id key)
 {
   pthread_cond_t * cond;

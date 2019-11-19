@@ -180,6 +180,10 @@ typedef struct {
   HANDLE hMutex;
 } ulapi_mutex_struct;
 
+typedef struct {
+  HANDLE hSemaphore;
+} ulapi_semaphore_struct;
+
 #else
 
 #include <pthread.h>		/* pthread_t */
@@ -187,6 +191,8 @@ typedef struct {
 typedef pthread_t ulapi_task_struct;
 
 typedef pthread_mutex_t ulapi_mutex_struct;
+
+typedef int ulapi_semaphore_struct;
 
 #endif
 
@@ -273,10 +279,11 @@ extern ulapi_result ulapi_sem_give(void *sem);
 extern ulapi_result ulapi_sem_take(void *sem);
 
 // placeholder for providing non-void interface to semaphores
-extern void *ulapi_semaphore_new(ulapi_id key);
-extern ulapi_result ulapi_semaphore_delete(void *sem);
-extern ulapi_result ulapi_semaphore_give(void *sem);
-extern ulapi_result ulapi_semaphore_take(void *sem);
+
+extern ulapi_semaphore_struct *ulapi_semaphore_new(ulapi_id key);
+extern ulapi_result ulapi_semaphore_delete(ulapi_semaphore_struct *sem);
+extern ulapi_result ulapi_semaphore_give(ulapi_semaphore_struct *sem);
+extern ulapi_result ulapi_semaphore_take(ulapi_semaphore_struct *sem);
 
 /*!
   Returns a pointer to an implementation-defined structure that is

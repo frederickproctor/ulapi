@@ -844,12 +844,12 @@ ulapi_result ulapi_semaphore_delete(ulapi_semaphore_struct *sem)
 
 ulapi_result ulapi_semaphore_give(ulapi_semaphore_struct *sem)
 {
-  return ULAPI_OK;
+  return ulapi_sem_give(sem);
 }
 
 ulapi_result ulapi_semaphore_take(ulapi_semaphore_struct *sem)
 {
-  return ULAPI_OK;
+  return ulapi_sem_take(sem);
 }
 
 void * ulapi_cond_new(ulapi_id key)

@@ -12,7 +12,7 @@
 #include <signal.h>
 #include "ulapi.h"		/* these decls */
 
-#define SEM_KEY 12321
+#define SEM_KEY 12322
 
 /*
   Syntax: semtest <arg>
@@ -35,7 +35,7 @@ static void quit(int sig)
 int main(int argc, char *argv[])
 {
   int master;
-  void *sem;
+  ulapi_semaphore_struct *sem;
 
   if (argc > 1) master = 1;
   else master = 0;
@@ -45,8 +45,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  sem = ulapi_sem_new(SEM_KEY);
-  if (master) ulapi_sem_give(sem);
+  sem = ulapi_semaphore_new(SEM_KEY);
 
   if (NULL == sem) {
     fprintf(stderr, "can't create semaphore\n");
@@ -57,17 +56,17 @@ int main(int argc, char *argv[])
 
   while (! done) {
     if (master) {
-      ulapi_sem_give(sem);
+      ulapi_semaphore_give(sem);
       printf("gave it\n");
       ulapi_sleep(1);
     } else {
       printf("trying it\n");
-      ulapi_sem_take(sem);
+      ulapi_semaphore_take(sem);
       printf("got it\n");
     }
   }
 
-  ulapi_sem_delete(sem);
+  ulapi_semaphore_delete(sem);
 
   return 0;
 }

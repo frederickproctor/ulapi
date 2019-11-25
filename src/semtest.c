@@ -56,13 +56,15 @@ int main(int argc, char *argv[])
   signal(SIGINT, quit);
 
   while (! done) {
-    printf("trying it\n");
-    ulapi_sem_take(sem);
-    printf("got it\n");
-    if (master) ulapi_sleep(1);
-    ulapi_sem_give(sem);
-    printf("gave it\n");
-    if (master) ulapi_sleep(1);
+    if (master) {
+      ulapi_sem_give(sem);
+      printf("gave it\n");
+      ulapi_sleep(1);
+    } else {
+      printf("trying it\n");
+      ulapi_sem_take(sem);
+      printf("got it\n");
+    }
   }
 
   ulapi_sem_delete(sem);

@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
 {
   int master;
   ulapi_semaphore_struct *sem;
+  ulapi_result retval;
 
   if (argc > 1) master = 1;
   else master = 0;
@@ -56,12 +57,20 @@ int main(int argc, char *argv[])
 
   while (! done) {
     if (master) {
-      ulapi_semaphore_give(sem);
+      retval = ulapi_semaphore_give(sem);
+      if (ULAPI_OK != retval) {
+	printf("ulapi_semaphore_give error\n");
+	return 1;
+      }
       printf("gave it\n");
       ulapi_sleep(1);
     } else {
       printf("trying it\n");
-      ulapi_semaphore_take(sem);
+      retval = ulapi_semaphore_take(sem);
+      if (ULAPI_OK != retval) {
+	printf("ulapi_semaphore_take error\n");
+	return 1;
+      }
       printf("got it\n");
     }
   }

@@ -5,10 +5,10 @@ AM_CPPFLAGS = -I../src
 lib_LIBRARIES = libunixulapi.a libunixrtapi.a
 
 libunixulapi_a_SOURCES = ../src/unix_ulapi.c ../src/ulapi.h ../src/inifile.c ../src/inifile.h
-libunixulapi_a_CFLAGS = -DTARGET_UNIX
+libunixulapi_a_CFLAGS = -DTARGET_UNIX @PIC_CFLAGS@
 
 libunixrtapi_a_SOURCES = ../src/unix_rtapi.c ../src/rtapi.h
-libunixrtapi_a_CFLAGS = -DTARGET_UNIX
+libunixrtapi_a_CFLAGS = -DTARGET_UNIX @PIC_CFLAGS@
 
 if HAVE_IOPL
 libunixulapi_a_CFLAGS += -O2

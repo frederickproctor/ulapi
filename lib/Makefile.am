@@ -22,10 +22,10 @@ if HAVE_XENOMAI
 lib_LIBRARIES += libxenoulapi.a libxenortapi.a
 
 libxenoulapi_a_SOURCES = ../src/xeno_ulapi.c ../src/ulapi.h
-libxenoulapi_a_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@
+libxenoulapi_a_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@ @PIC_CFLAGS@
 
 libxenortapi_a_SOURCES = ../src/xeno_rtapi.c ../src/rtapi.h
-libxenortapi_a_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@
+libxenortapi_a_CFLAGS = -DTARGET_XENOMAI @XENOMAI_CFLAGS@ @PIC_CFLAGS@
 
 if HAVE_IOPL
 libxenoulapi_a_CFLAGS += -O2

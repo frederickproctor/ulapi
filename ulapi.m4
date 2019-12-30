@@ -378,7 +378,7 @@ AC_DEFUN([ACX_ULAPI],
 	else
 	[AC_MSG_RESULT([$ULAPI_DIR])]
 	ULAPI_CFLAGS="-I$ULAPI_DIR/include"
-	ULAPI_LIBS="-L$ULAPI_DIR/lib -lulapi $PTHREAD_LIBS"
+	ULAPI_LIBS="-L$ULAPI_DIR/lib -lunixrtapi -lunixulapi $PTHREAD_LIBS"
 dnl put HAVE_ULAPI in config.h
 	[AC_DEFINE(HAVE_ULAPI,
 		1, [Define non-zero if you have ulapi.])]
